@@ -76,30 +76,34 @@ Earlier prototypes relied on static rules (e.g. hardcoding specific test IP subn
 
 ## 4. V3 Model Performance Benchmark
 
-Evaluated across multiple rigorous data splits:
+Evaluated across multiple rigorous data splits (XGBoost V3 / TabNet V3):
 
-| Split Type | Evaluation Dataset | XGBoost V3 F1 | TabNet V3 F1 | Primary Security Observation |
-| :--- | :--- | :---: | :---: | :--- |
-| **Random Split** | Stratified Holdout Test | **0.9995** | **0.9985** | High overall discrimination across balanced distribution |
-| **Time-Based Split** | Chronological Holdout | **0.9980** | **0.9970** | Resilient against temporal drift over time windows |
-| **Identity Holdout** | Unseen Identities | **0.9840** | **0.9810** | Generalizes to unseen roles and users with cold-start |
-| **Real Controlled AWS** | Real CloudTrail Sandboxes | **0.9650** | **0.9580** | Accurately identifies real privilege escalation actions |
+| Split Type | Evaluation Dataset | Samples | XGBoost V3 F1 | TabNet V3 F1 | Primary Security Observation |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| **Random Split** | Stratified Holdout Test | 2,800 | **0.8765** | **0.8725** | Solid discrimination; recall (0.84) trails precision (0.91) — model under-flags more than it over-flags |
+| **Time-Based Split** | Chronological Holdout | 2,800 | **0.8787** | **0.8682** | Stable across temporal drift, comparable to random split |
+| **Identity Holdout** | Unseen Identities | 2,437 | **0.8330** | **0.8166** | Real generalization gap on unseen roles/users — ~4-5 F1 points lower than in-distribution |
+| **Real Benign Telemetry** | Real CloudTrail (benign only) | 4 | 1.00 acc. (indicative only) | 1.00 acc. (indicative only) | Sample size far too small for statistical reliability |
+| **Real Controlled AWS Attack** | Real CloudTrail Sandboxes | 0 | *Not yet evaluated* | *Not yet evaluated* | `controlled_experiment_runner.py` has not been run in live mode; no real attack telemetry collected to date |
+
+> **Note:** All reported metrics above are on a 14,004-event dataset (14,000 synthetic + 4 real benign, 0 real attack). Real-world validation against live/sandboxed AWS attack telemetry is a known limitation and listed under Future Work.
 
 ---
 
 ## 5. Quantitative XAI Trustworthiness
 
-Unlike qualitative subjective inspection, V3 evaluates explanation quality through formal statistical tests:
-
 | Metric Category | Metric | Measured Value | Study Benchmark | Assessment |
 | :--- | :--- | :---: | :---: | :--- |
-| **Faithfulness** | $\Delta P$ (Ablating Top-1 SHAP) | **0.2070** | $> 0.02$ | Significant prediction impact |
-| **Faithfulness** | $\Delta P$ (Ablating Top-3 SHAP) | **0.4117** | $> 0.05$ | Passed |
-| **Faithfulness** | $\Delta P$ (Ablating Random-3 Control) | **0.0937** | $< \Delta P_{\text{top3}}$ | Passed |
-| **Faithfulness** | **Impact Ratio (Top-3 / Random-3)** | **4.39x** | $> 1.50\text{x}$ | **High Explanation Faithfulness** |
-| **Stability** | Spearman Rank Correlation | **0.8506** | $> 0.70$ | **Stable under telemetry noise** |
-| **Stability** | Top-3 Jaccard Similarity | **0.6333** | $> 0.50$ | High rank invariance |
-| **LLM Faithfulness**| Top-Feature Alignment | **100.0%** | $> 90\%$ | LLM strictly cites model drivers |
+| **Faithfulness** | ΔP (Ablating Top-1 SHAP) | **0.2075** | > 0.15 | Passed |
+| **Faithfulness** | ΔP (Ablating Top-3 SHAP) | **0.4290** | > 0.25 | Passed |
+| **Faithfulness** | ΔP (Ablating Random-3 Control) | **0.0715** | < ΔP top-3 | Passed |
+| **Faithfulness** | Impact Ratio (Top-3 / Random-3) | **6.0x** | > 2.0x | High Explanation Faithfulness |
+| **Stability** | Spearman Rank Correlation | **0.9714** | > 0.85 | Highly Stable |
+| **Stability** | Top-3 Jaccard Similarity | **0.9153** | — | High rank invariance |
+| **SHAP–LIME Agreement** | Top-1 Agreement Rate | **27.0%** | > 70% | **Below target** — SHAP and LIME frequently disagree on the top driver |
+| **SHAP–LIME Agreement** | Top-3 Jaccard Similarity | **0.333** | > 0.60 | **Below target** |
+| **LIME Fidelity** | Surrogate R² | **0.419** | > 0.60 | **Sub-optimal linear approximation** |
+| **LLM Grounding**| Top-Feature Alignment | **100.0%** | > 90% | High — *note: the LLM is prompted with the ranked SHAP list and asked to cite from it, so this measures instruction-following/grounding, not independent faithfulness. See Section 8 (Limitations).* |
 
 ---
 
@@ -215,3 +219,9 @@ The system uses Google's current Gemini API with **Gemini 3.6 Flash** via the of
    - **Fault-Tolerant Retries**: If the Gemini API is rate-limited, times out, or returns invalid JSON, the system automatically retries (maximum 2 retries with backoff) and seamlessly falls back to the local deterministic narrator.
    - **Zero Cloud Lock-in**: If live AWS credentials are not configured, S3 ingestion and DynamoDB persistence automatically switch to mock modes. The entire pipeline remains 100% operational offline.
 
+## 9. Known Limitations
+
+- No real-world attack telemetry has been evaluated yet — `real_controlled_aws` partition currently has 0 samples.
+- SHAP and LIME show weak agreement (27% top-1, R² 0.419 for LIME), indicating the two explainers frequently diverge on the same prediction; results should be read as complementary, not confirmatory.
+- The LLM faithfulness audit is prompt-grounded (the model is shown the ranked SHAP features and asked to cite the top one), so the 100% alignment reflects grounding compliance rather than independent verification.
+- Identity-holdout performance (F1 0.83) is meaningfully lower than in-distribution splits, indicating limited generalization to previously unseen principals.
