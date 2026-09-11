@@ -1,0 +1,113 @@
+{
+  "dataset_name": "CloudTrail Explainable Security V3 Dataset",
+  "generation_timestamp": "2026-09-11T07:24:55.489512+00:00",
+  "total_records": 14004,
+  "duplicates_removed": 0,
+  "missing_values_by_feature": {
+    "event_name": 0,
+    "event_source": 0,
+    "aws_region": 0,
+    "identity_type": 0,
+    "user_agent_category": 0,
+    "is_new_ip_for_identity": 0,
+    "is_new_region_for_identity": 0,
+    "event_hour": 0,
+    "is_off_hours": 0,
+    "call_frequency_10m": 0,
+    "target_user_is_different": 0,
+    "is_privilege_action": 0,
+    "error_status": 0,
+    "mfa_authenticated": 0
+  },
+  "class_distribution": {
+    "benign_count": 7994,
+    "threat_count": 6010,
+    "benign_percentage": 57.08,
+    "threat_percentage": 42.92
+  },
+  "data_source_distribution": {
+    "synthetic": 14000,
+    "real_benign": 4
+  },
+  "attack_type_distribution": {
+    "none": 7994,
+    "cloud_intrusion_threat": 1150,
+    "privilege_escalation_user_policy": 560,
+    "rogue_credential_creation": 536,
+    "inline_policy_injection": 535,
+    "credential_activation_abuse": 531,
+    "unauthorized_role_assumption": 527,
+    "pass_role_privilege_escalation": 526,
+    "role_inline_policy_backdoor": 525,
+    "privilege_escalation_role_policy": 520,
+    "discovery_reconnaissance": 300,
+    "permission_probing": 300
+  },
+  "leakage_audit": {
+    "single_feature_auc": {
+      "is_new_ip_for_identity": 0.6081,
+      "is_new_region_for_identity": 0.5016,
+      "event_hour": 0.5632,
+      "is_off_hours": 0.6677,
+      "call_frequency_10m": 0.5229,
+      "target_user_is_different": 0.6764,
+      "is_privilege_action": 0.5249,
+      "error_status": 0.6099,
+      "mfa_authenticated": 0.6334
+    },
+    "pearson_correlation": {
+      "is_new_ip_for_identity": -0.3181,
+      "is_new_region_for_identity": 0.0328,
+      "event_hour": -0.1196,
+      "is_off_hours": 0.3519,
+      "call_frequency_10m": -0.0423,
+      "target_user_is_different": 0.4267,
+      "is_privilege_action": 0.0529,
+      "error_status": 0.2595,
+      "mfa_authenticated": -0.2965
+    },
+    "categorical_mutual_information": {},
+    "max_auc": 0.6764,
+    "max_correlation": 0.4267,
+    "max_mi": 0.1267,
+    "passed": true,
+    "top_mi_feature": "user_agent_category_Script_Tool"
+  },
+  "evaluation_splits": {
+    "real_holdout": {
+      "total_rows": 4,
+      "real_controlled_aws_rows": 0,
+      "real_benign_rows": 4,
+      "path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\real_holdout.csv"
+    },
+    "random": {
+      "train_rows": 11200,
+      "test_rows": 2800,
+      "train_threat_rate": 0.4293,
+      "test_threat_rate": 0.4293,
+      "train_path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\random_train.csv",
+      "test_path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\random_test.csv"
+    },
+    "time_based": {
+      "train_rows": 11200,
+      "test_rows": 2800,
+      "cutoff_timestamp": "2026-04-25T12:21:00Z",
+      "train_threat_rate": 0.4331,
+      "test_threat_rate": 0.4139,
+      "train_path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\time_train.csv",
+      "test_path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\time_test.csv"
+    },
+    "identity_holdout": {
+      "train_rows": 11563,
+      "test_rows": 2437,
+      "total_identities": 6,
+      "held_out_identities": [
+        "arn:aws:iam::123456789012:role/DevOpsAdminRole"
+      ],
+      "train_threat_rate": 0.4277,
+      "test_threat_rate": 0.437,
+      "train_path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\identity_holdout_train.csv",
+      "test_path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\identity_holdout_test.csv"
+    }
+  }
+}

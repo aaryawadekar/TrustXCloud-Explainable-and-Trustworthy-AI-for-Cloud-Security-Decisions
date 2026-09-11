@@ -1,0 +1,165 @@
+{
+  "experiment_id": "exp-iam-role-pol-417fa3",
+  "scenario_id": "SCN-IAM-PE-04",
+  "data_source": "simulated_sandbox",
+  "collected_at": "2026-09-10T13:33:28.027090+00:00",
+  "event_count": 4,
+  "Records": [
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX0EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T13:32:52.824803+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T13:32:52.824803+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": "sec_sandbox_test_role"
+      },
+      "responseElements": null,
+      "requestID": "07380c3e-88b8-42a7-8a55-7592fdd690f6",
+      "eventID": "39100523-3fb7-4f5d-8f5b-45eedd68a683",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX1EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T13:33:07.824803+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T13:33:07.824803+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": "sec_sandbox_test_role"
+      },
+      "responseElements": null,
+      "requestID": "8f84ba06-5bc0-4e16-9cc9-a199d9192f51",
+      "eventID": "ae016b74-3d21-4ad7-8194-0326a44dcc6b",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX2EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T13:33:22.824803+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T13:33:22.824803+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DetachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": "sec_sandbox_test_role"
+      },
+      "responseElements": null,
+      "requestID": "1c9a1fad-2678-4721-ab79-7a93dfddcdcf",
+      "eventID": "595bccf1-a81e-4130-8b70-4b973521c5b0",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX3EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T13:33:37.824803+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T13:33:37.824803+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": "sec_sandbox_test_role"
+      },
+      "responseElements": null,
+      "requestID": "19650990-82c5-4260-a2de-000273053174",
+      "eventID": "e4ab8d03-cb3a-4f0b-a6c8-8dda1e64b3f9",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    }
+  ]
+}

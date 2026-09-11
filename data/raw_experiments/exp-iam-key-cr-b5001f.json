@@ -1,0 +1,126 @@
+{
+  "experiment_id": "exp-iam-key-cr-b5001f",
+  "scenario_id": "SCN-IAM-PE-03",
+  "data_source": "simulated_sandbox",
+  "collected_at": "2026-09-10T16:58:42.271150+00:00",
+  "event_count": 3,
+  "Records": [
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX0EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T16:58:42.216647+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T16:58:42.216647+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": null
+      },
+      "responseElements": null,
+      "requestID": "c3c2e072-76be-4f98-b52e-35177b91217b",
+      "eventID": "aadccd30-66da-4319-a154-4334426da0e0",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX1EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T16:58:57.216647+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T16:58:57.216647+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": null
+      },
+      "responseElements": null,
+      "requestID": "b295937e-2c65-446f-a1bc-3bbd1bb0bf7d",
+      "eventID": "15e32575-b49d-42ff-87d0-29bb87ae65f5",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX2EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T16:59:12.216647+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T16:59:12.216647+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sandbox_operator",
+        "roleName": null
+      },
+      "responseElements": null,
+      "requestID": "0cbcf500-1d4b-41e0-afb4-9f7983463ae0",
+      "eventID": "effd49b6-719b-419b-b0b2-743002f24b7a",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    }
+  ]
+}

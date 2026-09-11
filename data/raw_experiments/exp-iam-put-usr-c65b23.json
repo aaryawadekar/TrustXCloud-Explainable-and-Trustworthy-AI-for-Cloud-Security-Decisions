@@ -1,0 +1,87 @@
+{
+  "experiment_id": "exp-iam-put-usr-c65b23",
+  "scenario_id": "SCN-IAM-PE-02",
+  "data_source": "simulated_sandbox",
+  "collected_at": "2026-09-10T13:33:28.023263+00:00",
+  "event_count": 2,
+  "Records": [
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX0EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T13:32:52.718271+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T13:32:52.718271+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sec_sandbox_test_user",
+        "roleName": null
+      },
+      "responseElements": null,
+      "requestID": "94672ebb-ccd6-4813-8127-7ae4aac1a7e7",
+      "eventID": "66ffa1f1-123f-4591-b9f9-5617a68a4d62",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDASANDBOX1EXAMPLE",
+        "arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+        "accountId": "123456789012",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "sandbox_operator",
+        "sessionContext": {
+          "sessionIssuer": {},
+          "webIdFederationData": {},
+          "attributes": {
+            "creationDate": "2026-09-10T13:33:07.718271+00:00",
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-09-10T13:33:07.718271+00:00",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2 Linux/5.15.0",
+      "requestParameters": {
+        "userName": "sec_sandbox_test_user",
+        "roleName": null
+      },
+      "responseElements": null,
+      "requestID": "29ab411e-2718-48ac-8295-4ef835f80f5c",
+      "eventID": "f79564d8-54b1-4e7f-be55-28e4eb2e5a15",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "123456789012",
+      "eventCategory": "Management",
+      "errorCode": null,
+      "errorMessage": null
+    }
+  ]
+}

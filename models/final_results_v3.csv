@@ -1,0 +1,11 @@
+model,dataset_partition,sample_count,threat_count,benign_count,accuracy,precision,recall,f1,roc_auc,pr_auc,false_positive_rate,false_negative_rate,confusion_matrix,tn,fp,fn,tp,sample_size_warning
+XGBoost_V3,1. Synthetic Test Data,2800,1202,1598,0.8979,0.9111,0.8444,0.8765,0.9652,0.961,0.062,0.1556,"[[1499, 99], [187, 1015]]",1499.0,99.0,187.0,1015.0,
+TabNet_V3,1. Synthetic Test Data,2800,1202,1598,0.8968,0.9286,0.8228,0.8725,0.9615,0.9585,0.0476,0.1772,"[[1522, 76], [213, 989]]",1522.0,76.0,213.0,989.0,
+XGBoost_V3,2. Real Benign Telemetry,4,0,4,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,"[[4, 0], [0, 0]]",4.0,0.0,0.0,0.0,"This partition has only 4 samples (< 100). Metrics should be treated as indicative, not statistically reliable."
+TabNet_V3,2. Real Benign Telemetry,4,0,4,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,"[[4, 0], [0, 0]]",4.0,0.0,0.0,0.0,"This partition has only 4 samples (< 100). Metrics should be treated as indicative, not statistically reliable."
+XGBoost_V3,3. Real Controlled AWS Attack Telemetry,0,0,0,,,,,,,,,,,,,,This partition has 0 samples. No metrics can be computed. Run controlled_experiment_runner.py in live mode to generate real data.
+TabNet_V3,3. Real Controlled AWS Attack Telemetry,0,0,0,,,,,,,,,,,,,,This partition has 0 samples. No metrics can be computed. Run controlled_experiment_runner.py in live mode to generate real data.
+XGBoost_V3,4. Time-Based Holdout Split,2800,1159,1641,0.9046,0.928,0.8343,0.8787,0.9639,0.9583,0.0457,0.1657,"[[1566, 75], [192, 967]]",1566.0,75.0,192.0,967.0,
+TabNet_V3,4. Time-Based Holdout Split,2800,1159,1641,0.8979,0.9318,0.8128,0.8682,0.955,0.951,0.042,0.1872,"[[1572, 69], [217, 942]]",1572.0,69.0,217.0,942.0,
+XGBoost_V3,5. Identity-Holdout Split,2437,1065,1372,0.8629,0.8909,0.7822,0.833,0.9429,0.9389,0.0743,0.2178,"[[1270, 102], [232, 833]]",1270.0,102.0,232.0,833.0,
+TabNet_V3,5. Identity-Holdout Split,2437,1065,1372,0.8551,0.914,0.738,0.8166,0.9328,0.9299,0.0539,0.262,"[[1298, 74], [279, 786]]",1298.0,74.0,279.0,786.0,

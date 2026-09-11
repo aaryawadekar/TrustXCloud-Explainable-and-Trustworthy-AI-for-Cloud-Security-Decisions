@@ -1,0 +1,494 @@
+[
+  {
+    "experiment_id": "exp-iam-key-cr-497b11",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:32:16.534863+00:00",
+    "end_time": "2026-09-10T13:32:16.585470+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:16.585506+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-71183a",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:32:16.639052+00:00",
+    "end_time": "2026-09-10T13:32:16.689340+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:16.689388+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-ddb6aa",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:32:52.664002+00:00",
+    "end_time": "2026-09-10T13:32:52.714423+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:52.714468+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-put-usr-c65b23",
+    "scenario_id": "SCN-IAM-PE-02",
+    "scenario_name": "Controlled Inline User Policy Injection",
+    "attack_type": "inline_policy_injection",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "PutUserPolicy",
+      "DeleteUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:32:52.718271+00:00",
+    "end_time": "2026-09-10T13:32:52.768795+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:52.768843+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-018fe3",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:32:52.771908+00:00",
+    "end_time": "2026-09-10T13:32:52.822595+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:52.822644+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-role-pol-417fa3",
+    "scenario_id": "SCN-IAM-PE-04",
+    "scenario_name": "Controlled Role Policy Escalation",
+    "attack_type": "role_inline_policy_backdoor",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachRolePolicy",
+      "PutRolePolicy",
+      "DetachRolePolicy",
+      "DeleteRolePolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:role/sec_sandbox_test_role"
+    ],
+    "start_time": "2026-09-10T13:32:52.824803+00:00",
+    "end_time": "2026-09-10T13:32:52.875361+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:52.875426+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-sts-ass-ee8a83",
+    "scenario_id": "SCN-IAM-PE-05",
+    "scenario_name": "Controlled Role Assumption Escalation",
+    "attack_type": "unauthorized_role_assumption",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AssumeRole",
+      "PassRole"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:role/sec_sandbox_target_role"
+    ],
+    "start_time": "2026-09-10T13:32:52.878596+00:00",
+    "end_time": "2026-09-10T13:32:52.929153+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:52.929219+00:00"
+  },
+  {
+    "experiment_id": "exp-benign-std-985561",
+    "scenario_id": "SCN-BENIGN-01",
+    "scenario_name": "Routine Cloud Operations Baseline",
+    "attack_type": "none",
+    "label": 0,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "GetCallerIdentity",
+      "ListBuckets",
+      "DescribeInstances",
+      "DescribeSecurityGroups"
+    ],
+    "target_resources": [
+      "*"
+    ],
+    "start_time": "2026-09-10T13:32:52.934471+00:00",
+    "end_time": "2026-09-10T13:32:52.985021+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:32:52.985067+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-3219cd",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:33:52.941100+00:00",
+    "end_time": "2026-09-10T13:33:52.991421+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:33:52.991473+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-520461",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:33:53.053408+00:00",
+    "end_time": "2026-09-10T13:33:53.103838+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:33:53.103892+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-474626",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:37:25.049735+00:00",
+    "end_time": "2026-09-10T13:37:25.100279+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:37:25.100342+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-fdf4ab",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:37:25.162664+00:00",
+    "end_time": "2026-09-10T13:37:25.213211+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:37:25.213279+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-a4a790",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:48:34.186366+00:00",
+    "end_time": "2026-09-10T13:48:34.236858+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:48:34.236895+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-160289",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T13:48:34.296468+00:00",
+    "end_time": "2026-09-10T13:48:34.346814+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T13:48:34.346863+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-b5001f",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T16:58:42.216647+00:00",
+    "end_time": "2026-09-10T16:58:42.267422+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T16:58:42.267474+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-507e07",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-10T16:58:46.379570+00:00",
+    "end_time": "2026-09-10T16:58:46.430138+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-10T16:58:46.430176+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-508364",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-11T08:10:13.394818+00:00",
+    "end_time": "2026-09-11T08:10:13.445177+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-11T08:10:13.445249+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-2313f3",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-11T08:10:17.554293+00:00",
+    "end_time": "2026-09-11T08:10:17.605001+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-11T08:10:17.605056+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-key-cr-76353b",
+    "scenario_id": "SCN-IAM-PE-03",
+    "scenario_name": "Controlled Access Key Creation and Status Mutation",
+    "attack_type": "rogue_credential_creation",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "CreateAccessKey",
+      "UpdateAccessKey",
+      "DeleteAccessKey"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-11T09:08:57.006169+00:00",
+    "end_time": "2026-09-11T09:08:57.056828+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-11T09:08:57.056911+00:00"
+  },
+  {
+    "experiment_id": "exp-iam-att-usr-08101a",
+    "scenario_id": "SCN-IAM-PE-01",
+    "scenario_name": "Controlled User Policy Attachment",
+    "attack_type": "privilege_escalation_user_policy",
+    "label": 1,
+    "data_source": "simulated_sandbox",
+    "principal_arn": "arn:aws:iam::123456789012:user/sandbox_operator",
+    "account_id": "123456789012",
+    "aws_region": "us-east-1",
+    "expected_events": [
+      "AttachUserPolicy",
+      "DetachUserPolicy"
+    ],
+    "target_resources": [
+      "arn:aws:iam::123456789012:user/sec_sandbox_test_user"
+    ],
+    "start_time": "2026-09-11T09:09:01.196177+00:00",
+    "end_time": "2026-09-11T09:09:01.246585+00:00",
+    "execution_mode": "simulated_sandbox",
+    "status": "COMPLETED",
+    "cleanup_status": "CLEANED",
+    "timestamp": "2026-09-11T09:09:01.246613+00:00"
+  }
+]

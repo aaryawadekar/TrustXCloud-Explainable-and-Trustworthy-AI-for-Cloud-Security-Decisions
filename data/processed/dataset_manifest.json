@@ -1,0 +1,70 @@
+{
+  "manifest_version": "3.0",
+  "dataset_file": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\final_v3_dataset.csv",
+  "created_at": "2026-09-11T07:24:55.495207+00:00",
+  "total_events": 14004,
+  "model_features": [
+    "event_name",
+    "event_source",
+    "aws_region",
+    "identity_type",
+    "user_agent_category",
+    "is_new_ip_for_identity",
+    "is_new_region_for_identity",
+    "event_hour",
+    "is_off_hours",
+    "call_frequency_10m",
+    "target_user_is_different",
+    "is_privilege_action",
+    "error_status",
+    "mfa_authenticated"
+  ],
+  "metadata_fields": [
+    "data_source",
+    "attack_type",
+    "scenario_id",
+    "event_time",
+    "identity_session_id",
+    "original_event_id",
+    "source_ip",
+    "user_name",
+    "identity_arn",
+    "is_threat"
+  ],
+  "excluded_from_model": [
+    "source_ip",
+    "user_name",
+    "identity_arn",
+    "original_event_id"
+  ],
+  "class_distribution": {
+    "benign_count": 7994,
+    "threat_count": 6010,
+    "benign_percentage": 57.08,
+    "threat_percentage": 42.92
+  },
+  "data_sources": {
+    "synthetic": 14000,
+    "real_benign": 4
+  },
+  "splits": {
+    "random": {
+      "train_rows": 11200,
+      "test_rows": 2800
+    },
+    "time_based": {
+      "train_rows": 11200,
+      "test_rows": 2800
+    },
+    "identity_holdout": {
+      "train_rows": 11563,
+      "test_rows": 2437
+    }
+  },
+  "real_holdout": {
+    "total_rows": 4,
+    "real_controlled_aws_rows": 0,
+    "real_benign_rows": 4,
+    "path": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\data\\processed\\splits\\real_holdout.csv"
+  }
+}

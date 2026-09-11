@@ -1,0 +1,272 @@
+{
+  "evaluation_splits": {
+    "xgboost_v3": {
+      "random": {
+        "accuracy": 0.8979,
+        "precision": 0.9111,
+        "recall": 0.8444,
+        "f1": 0.8765,
+        "roc_auc": 0.9652,
+        "pr_auc": 0.961,
+        "confusion_matrix": [
+          [
+            1499,
+            99
+          ],
+          [
+            187,
+            1015
+          ]
+        ],
+        "tn": 1499,
+        "fp": 99,
+        "fn": 187,
+        "tp": 1015,
+        "false_positive_rate": 0.062,
+        "false_negative_rate": 0.1556
+      },
+      "time-based": {
+        "accuracy": 0.9046,
+        "precision": 0.928,
+        "recall": 0.8343,
+        "f1": 0.8787,
+        "roc_auc": 0.9639,
+        "pr_auc": 0.9583,
+        "confusion_matrix": [
+          [
+            1566,
+            75
+          ],
+          [
+            192,
+            967
+          ]
+        ],
+        "tn": 1566,
+        "fp": 75,
+        "fn": 192,
+        "tp": 967,
+        "false_positive_rate": 0.0457,
+        "false_negative_rate": 0.1657
+      },
+      "identity-holdout": {
+        "accuracy": 0.8629,
+        "precision": 0.8909,
+        "recall": 0.7822,
+        "f1": 0.833,
+        "roc_auc": 0.9429,
+        "pr_auc": 0.9389,
+        "confusion_matrix": [
+          [
+            1270,
+            102
+          ],
+          [
+            232,
+            833
+          ]
+        ],
+        "tn": 1270,
+        "fp": 102,
+        "fn": 232,
+        "tp": 833,
+        "false_positive_rate": 0.0743,
+        "false_negative_rate": 0.2178
+      }
+    },
+    "tabnet_v3": {
+      "random": {
+        "accuracy": 0.8968,
+        "precision": 0.9286,
+        "recall": 0.8228,
+        "f1": 0.8725,
+        "roc_auc": 0.9615,
+        "pr_auc": 0.9585,
+        "confusion_matrix": [
+          [
+            1522,
+            76
+          ],
+          [
+            213,
+            989
+          ]
+        ],
+        "tn": 1522,
+        "fp": 76,
+        "fn": 213,
+        "tp": 989,
+        "false_positive_rate": 0.0476,
+        "false_negative_rate": 0.1772
+      },
+      "time-based": {
+        "accuracy": 0.8979,
+        "precision": 0.9318,
+        "recall": 0.8128,
+        "f1": 0.8682,
+        "roc_auc": 0.955,
+        "pr_auc": 0.951,
+        "confusion_matrix": [
+          [
+            1572,
+            69
+          ],
+          [
+            217,
+            942
+          ]
+        ],
+        "tn": 1572,
+        "fp": 69,
+        "fn": 217,
+        "tp": 942,
+        "false_positive_rate": 0.042,
+        "false_negative_rate": 0.1872
+      },
+      "identity-holdout": {
+        "accuracy": 0.8551,
+        "precision": 0.914,
+        "recall": 0.738,
+        "f1": 0.8166,
+        "roc_auc": 0.9328,
+        "pr_auc": 0.9299,
+        "confusion_matrix": [
+          [
+            1298,
+            74
+          ],
+          [
+            279,
+            786
+          ]
+        ],
+        "tn": 1298,
+        "fp": 74,
+        "fn": 279,
+        "tp": 786,
+        "false_positive_rate": 0.0539,
+        "false_negative_rate": 0.262
+      }
+    }
+  },
+  "v2_comparison": {
+    "v2_metrics": {
+      "xgboost": {
+        "accuracy": 0.988622440049011,
+        "precision": 0.9862579281183932,
+        "recall": 0.9795275590551181,
+        "f1": 0.9828812220173822,
+        "roc_auc": 0.999262379656587,
+        "confusion_matrix": [
+          [
+            7564,
+            52
+          ],
+          [
+            78,
+            3732
+          ]
+        ]
+      },
+      "tabnet": {
+        "accuracy": 0.9862594083668825,
+        "precision": 0.9755272064566519,
+        "recall": 0.9834645669291339,
+        "f1": 0.9794798065612338,
+        "roc_auc": 0.9989246978318885,
+        "confusion_matrix": [
+          [
+            7522,
+            94
+          ],
+          [
+            63,
+            3747
+          ]
+        ]
+      },
+      "feature_columns": [
+        "event_name_enc",
+        "event_source_enc",
+        "aws_region_enc",
+        "identity_type_enc",
+        "user_agent_cat_enc",
+        "is_new_ip_for_identity",
+        "is_new_region_for_identity",
+        "event_hour",
+        "is_off_hours",
+        "call_frequency_10m",
+        "target_user_is_different",
+        "is_privilege_action",
+        "error_status",
+        "mfa_authenticated"
+      ]
+    },
+    "v3_random_metrics": {
+      "xgboost": {
+        "accuracy": 0.8979,
+        "precision": 0.9111,
+        "recall": 0.8444,
+        "f1": 0.8765,
+        "roc_auc": 0.9652,
+        "pr_auc": 0.961,
+        "confusion_matrix": [
+          [
+            1499,
+            99
+          ],
+          [
+            187,
+            1015
+          ]
+        ],
+        "tn": 1499,
+        "fp": 99,
+        "fn": 187,
+        "tp": 1015,
+        "false_positive_rate": 0.062,
+        "false_negative_rate": 0.1556
+      },
+      "tabnet": {
+        "accuracy": 0.8968,
+        "precision": 0.9286,
+        "recall": 0.8228,
+        "f1": 0.8725,
+        "roc_auc": 0.9615,
+        "pr_auc": 0.9585,
+        "confusion_matrix": [
+          [
+            1522,
+            76
+          ],
+          [
+            213,
+            989
+          ]
+        ],
+        "tn": 1522,
+        "fp": 76,
+        "fn": 213,
+        "tp": 989,
+        "false_positive_rate": 0.0476,
+        "false_negative_rate": 0.1772
+      }
+    }
+  },
+  "feature_columns": [
+    "event_name_enc",
+    "event_source_enc",
+    "aws_region_enc",
+    "identity_type_enc",
+    "user_agent_cat_enc",
+    "is_new_ip_for_identity",
+    "is_new_region_for_identity",
+    "event_hour",
+    "is_off_hours",
+    "call_frequency_10m",
+    "target_user_is_different",
+    "is_privilege_action",
+    "error_status",
+    "mfa_authenticated"
+  ]
+}

@@ -1,0 +1,267 @@
+{
+  "shap_lime_agreement_cases": [
+    {
+      "sample_index": 0,
+      "shap_top1_feature": "is_new_ip_for_identity",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "is_new_ip_for_identity",
+        "event_hour",
+        "user_agent_cat_enc"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "target_user_is_different",
+        "is_off_hours"
+      ],
+      "jaccard_overlap": 0.2,
+      "rank_correlation": 0.7934
+    },
+    {
+      "sample_index": 2,
+      "shap_top1_feature": "user_agent_cat_enc",
+      "lime_top1_feature": "user_agent_cat_enc",
+      "shap_top3_features": [
+        "user_agent_cat_enc",
+        "is_off_hours",
+        "mfa_authenticated"
+      ],
+      "lime_top3_features": [
+        "user_agent_cat_enc",
+        "is_new_ip_for_identity",
+        "is_off_hours"
+      ],
+      "jaccard_overlap": 0.5,
+      "rank_correlation": 0.6747
+    },
+    {
+      "sample_index": 5,
+      "shap_top1_feature": "user_agent_cat_enc",
+      "lime_top1_feature": "user_agent_cat_enc",
+      "shap_top3_features": [
+        "user_agent_cat_enc",
+        "target_user_is_different",
+        "is_off_hours"
+      ],
+      "lime_top3_features": [
+        "user_agent_cat_enc",
+        "is_new_ip_for_identity",
+        "target_user_is_different"
+      ],
+      "jaccard_overlap": 0.5,
+      "rank_correlation": 0.6
+    },
+    {
+      "sample_index": 12,
+      "shap_top1_feature": "is_new_ip_for_identity",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "is_new_ip_for_identity",
+        "mfa_authenticated",
+        "is_off_hours"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "target_user_is_different",
+        "is_off_hours"
+      ],
+      "jaccard_overlap": 0.5,
+      "rank_correlation": 0.7231
+    },
+    {
+      "sample_index": 14,
+      "shap_top1_feature": "is_new_ip_for_identity",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "is_new_ip_for_identity",
+        "target_user_is_different",
+        "user_agent_cat_enc"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "is_off_hours",
+        "target_user_is_different"
+      ],
+      "jaccard_overlap": 0.5,
+      "rank_correlation": 0.7758
+    }
+  ],
+  "shap_lime_disagreement_cases": [
+    {
+      "sample_index": 1,
+      "shap_top1_feature": "target_user_is_different",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "target_user_is_different",
+        "user_agent_cat_enc",
+        "is_off_hours"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "target_user_is_different",
+        "is_off_hours"
+      ],
+      "jaccard_overlap": 0.5,
+      "rank_correlation": 0.7451
+    },
+    {
+      "sample_index": 3,
+      "shap_top1_feature": "target_user_is_different",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "target_user_is_different",
+        "user_agent_cat_enc",
+        "error_status"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "target_user_is_different",
+        "is_off_hours"
+      ],
+      "jaccard_overlap": 0.2,
+      "rank_correlation": 0.7055
+    },
+    {
+      "sample_index": 4,
+      "shap_top1_feature": "user_agent_cat_enc",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "user_agent_cat_enc",
+        "is_off_hours",
+        "identity_type_enc"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "is_off_hours",
+        "target_user_is_different"
+      ],
+      "jaccard_overlap": 0.2,
+      "rank_correlation": 0.4681
+    },
+    {
+      "sample_index": 6,
+      "shap_top1_feature": "error_status",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "error_status",
+        "user_agent_cat_enc",
+        "mfa_authenticated"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "is_off_hours",
+        "target_user_is_different"
+      ],
+      "jaccard_overlap": 0.0,
+      "rank_correlation": 0.5429
+    },
+    {
+      "sample_index": 7,
+      "shap_top1_feature": "target_user_is_different",
+      "lime_top1_feature": "is_new_ip_for_identity",
+      "shap_top3_features": [
+        "target_user_is_different",
+        "error_status",
+        "user_agent_cat_enc"
+      ],
+      "lime_top3_features": [
+        "is_new_ip_for_identity",
+        "target_user_is_different",
+        "is_off_hours"
+      ],
+      "jaccard_overlap": 0.2,
+      "rank_correlation": 0.7802
+    }
+  ],
+  "llm_audited_samples": [
+    {
+      "sample_index": 0,
+      "event_name": "PutRolePolicy",
+      "model_decision": "BENIGN",
+      "mathematical_top_shap": "is_new_ip_for_identity",
+      "llm_cited_feature": "is_new_ip_for_identity",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was assessed as benign (confidence: 95.0%). Principal 'arn:aws:iam::123456789012:role/JenkinsCICDRunner' executed routine call 'PutRolePolicy' matching established enterprise operating baselines."
+    },
+    {
+      "sample_index": 1,
+      "event_name": "PassRole",
+      "model_decision": "BENIGN",
+      "mathematical_top_shap": "target_user_is_different",
+      "llm_cited_feature": "target_user_is_different",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was assessed as benign (confidence: 95.0%). Principal 'arn:aws:iam::123456789012:role/DevOpsAdminRole' executed routine call 'PassRole' matching established enterprise operating baselines."
+    },
+    {
+      "sample_index": 2,
+      "event_name": "AttachUserPolicy",
+      "model_decision": "THREAT",
+      "mathematical_top_shap": "user_agent_cat_enc",
+      "llm_cited_feature": "user_agent_cat_enc",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was flagged as a potential threat (confidence: 95.0%) because principal 'arn:aws:iam::123456789012:user/carol_secops' attempted 'AttachUserPolicy' in region 'us-west-2' accompanied by client software category (aws console, cli, sdk, script/automated tool) and action occurred outside regular business hours (night, early morning, or unapproved shift)."
+    },
+    {
+      "sample_index": 3,
+      "event_name": "ListUsers",
+      "model_decision": "BENIGN",
+      "mathematical_top_shap": "target_user_is_different",
+      "llm_cited_feature": "target_user_is_different",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was assessed as benign (confidence: 95.0%). Principal 'arn:aws:iam::123456789012:role/JenkinsCICDRunner' executed routine call 'ListUsers' matching established enterprise operating baselines."
+    },
+    {
+      "sample_index": 4,
+      "event_name": "ListUsers",
+      "model_decision": "THREAT",
+      "mathematical_top_shap": "user_agent_cat_enc",
+      "llm_cited_feature": "user_agent_cat_enc",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was flagged as a potential threat (confidence: 95.0%) because principal 'arn:aws:iam::123456789012:user/alice_lead_dev' attempted 'ListUsers' in region 'us-west-2' accompanied by client software category (aws console, cli, sdk, script/automated tool) and action occurred outside regular business hours (night, early morning, or unapproved shift)."
+    },
+    {
+      "sample_index": 5,
+      "event_name": "UpdateAccessKey",
+      "model_decision": "THREAT",
+      "mathematical_top_shap": "user_agent_cat_enc",
+      "llm_cited_feature": "user_agent_cat_enc",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was flagged as a potential threat (confidence: 95.0%) because principal 'arn:aws:iam::123456789012:role/DevOpsAdminRole' attempted 'UpdateAccessKey' in region 'us-east-2' accompanied by client software category (aws console, cli, sdk, script/automated tool) and action targets or modifies credentials/permissions of an entity different from the caller."
+    },
+    {
+      "sample_index": 6,
+      "event_name": "CreateAccessKey",
+      "model_decision": "THREAT",
+      "mathematical_top_shap": "error_status",
+      "llm_cited_feature": "error_status",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was flagged as a potential threat (confidence: 95.0%) because principal 'arn:aws:iam::123456789012:user/carol_secops' attempted 'CreateAccessKey' in region 'us-west-2' accompanied by api call resulted in an error or accessdenied (permission probing / brute-force) and client software category (aws console, cli, sdk, script/automated tool)."
+    },
+    {
+      "sample_index": 7,
+      "event_name": "AssumeRole",
+      "model_decision": "THREAT",
+      "mathematical_top_shap": "target_user_is_different",
+      "llm_cited_feature": "target_user_is_different",
+      "exact_match": true,
+      "semantic_alignment": true,
+      "is_conflict_flagged": false,
+      "narrative": "This action was flagged as a potential threat (confidence: 95.0%) because principal 'arn:aws:iam::123456789012:role/AppBackendServiceRole' attempted 'AssumeRole' in region 'us-east-2' accompanied by action targets or modifies credentials/permissions of an entity different from the caller and api call resulted in an error or accessdenied (permission probing / brute-force)."
+    }
+  ],
+  "llm_conflicts_flagged": []
+}

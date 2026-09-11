@@ -1,0 +1,16 @@
+# Environment and Secrets
+.env
+*.env
+!.env.example
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Artifacts & Temporary Files
+scratch/
+*.log

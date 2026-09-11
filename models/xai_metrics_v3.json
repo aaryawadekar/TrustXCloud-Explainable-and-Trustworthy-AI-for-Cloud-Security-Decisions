@@ -1,0 +1,64 @@
+{
+  "shap_faithfulness": {
+    "evaluation_method": "Feature Ablation (Median Imputation)",
+    "samples_evaluated": 200,
+    "mean_delta_p_top1": 0.2075,
+    "mean_delta_p_top3": 0.429,
+    "mean_delta_p_random_control": 0.0715,
+    "faithfulness_ratio": 6.0,
+    "study_defined_criteria": {
+      "top1_threshold": "> 0.1500",
+      "top3_threshold": "> 0.2500",
+      "ratio_threshold": "> 2.0x",
+      "assessment": "High Faithfulness"
+    }
+  },
+  "lime_faithfulness": {
+    "evaluation_method": "Local Linear Surrogate Goodness-of-Fit",
+    "samples_evaluated": 60,
+    "mean_surrogate_r2_fidelity": 0.419,
+    "mean_local_prediction_error": 0.2646,
+    "study_defined_criteria": {
+      "r2_threshold": "> 0.6000",
+      "error_threshold": "< 0.1500",
+      "assessment": "Sub-optimal Linear Approximation"
+    }
+  },
+  "explanation_stability": {
+    "evaluation_method": "Gaussian Perturbation Sensitivity",
+    "samples_evaluated": 150,
+    "mean_spearman_rank_correlation": 0.9714,
+    "top1_stability_agreement": 0.9067,
+    "mean_top3_jaccard_similarity": 0.9153,
+    "study_defined_criteria": {
+      "rank_corr_threshold": "> 0.8500",
+      "top1_threshold": "> 0.8500",
+      "assessment": "Highly Stable"
+    }
+  },
+  "shap_lime_agreement": {
+    "samples_evaluated": 100,
+    "top1_agreement_rate": 0.27,
+    "mean_top3_jaccard_similarity": 0.333,
+    "mean_rank_correlation": 0.5234,
+    "study_defined_criteria": {
+      "top1_target": "> 0.7000",
+      "top3_target": "> 0.6000",
+      "assessment": "Moderate Consensus"
+    }
+  },
+  "llm_narrative_alignment": {
+    "samples_audited": 50,
+    "exact_feature_match_rate": 1.0,
+    "semantic_alignment_rate": 1.0,
+    "top3_overlap_rate": 1.0,
+    "conflicts_detected_count": 0,
+    "conflict_rate": 0.0,
+    "study_defined_criteria": {
+      "exact_match_target": "> 0.8500",
+      "semantic_target": "> 0.9000",
+      "max_acceptable_conflict_rate": "< 0.1000",
+      "assessment": "High Groundedness"
+    }
+  }
+}

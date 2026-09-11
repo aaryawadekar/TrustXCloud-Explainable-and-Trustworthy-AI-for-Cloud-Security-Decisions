@@ -1,0 +1,1804 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-07T17:12:46Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.50",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "alice_lead_dev"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "rogue_credential_creation",
+        "scenario_id": "syn-std-th-9409"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-24T00:34:31Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "eu-west-1",
+      "sourceIPAddress": "192.168.10.40",
+      "userAgent": "curl/7.88.1",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "pass_role_privilege_escalation",
+        "scenario_id": "syn-std-th-7222"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-22T11:20:17Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "sa-east-1",
+      "sourceIPAddress": "10.100.4.15",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "DevOpsAdminRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-1714"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-18T18:31:56Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "185.220.101.5",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_role_policy",
+        "scenario_id": "syn-std-th-1834"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-04T15:25:39Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "sa-east-1",
+      "sourceIPAddress": "10.10.15.22",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-5952"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-08T01:21:14Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.10.15.22",
+      "userAgent": "Pacu/v1.4.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "credential_activation_abuse",
+        "scenario_id": "syn-std-th-7577"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-27T10:23:37Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "192.168.10.40",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-5635"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-18T18:02:05Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-east-2",
+      "sourceIPAddress": "185.220.101.5",
+      "userAgent": "curl/7.88.1",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "pass_role_privilege_escalation",
+        "scenario_id": "syn-std-th-9603"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-14T13:12:44Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-2",
+      "sourceIPAddress": "192.168.10.40",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2015"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-19T00:52:44Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "us-east-2",
+      "sourceIPAddress": "10.50.2.10",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-7875"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-14T15:09:02Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "ap-southeast-1",
+      "sourceIPAddress": "45.154.255.99",
+      "userAgent": "botocore/1.29.0 raw-script",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_user_policy",
+        "scenario_id": "syn-std-th-9709"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-14T20:19:47Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.10.15.22",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2144"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/JenkinsCICDRunner",
+        "userName": "JenkinsCICDRunner",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-02T15:55:47Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.200.1.5",
+      "userAgent": "aws-sdk-go/v2.1.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "JenkinsCICDRunner"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_role_policy",
+        "scenario_id": "syn-std-th-7484"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-30T15:30:45Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "172.16.45.138",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-1099"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-01T15:11:46Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-4706"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-01T17:11:18Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.51",
+      "userAgent": "Python/3.11 aiobotocore/2.5.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "alice_lead_dev"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-5563"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-16T15:04:33Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "AssumeRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.100.4.15",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-6488"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-07T20:47:39Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "GetObject",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "10.50.2.10",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-3555"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-29T12:16:12Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "10.10.15.23",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "pass_role_privilege_escalation",
+        "scenario_id": "syn-std-th-4483"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-02T16:42:32Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.10.15.23",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-7420"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-30T04:33:16Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "ap-southeast-1",
+      "sourceIPAddress": "203.0.113.88",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "role_inline_policy_backdoor",
+        "scenario_id": "syn-std-th-7962"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-08T14:49:59Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "sa-east-1",
+      "sourceIPAddress": "10.50.2.10",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "role_inline_policy_backdoor",
+        "scenario_id": "syn-std-th-9842"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-24T09:07:01Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-8908"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-20T10:20:13Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "GetCallerIdentity",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-4765"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-15T00:12:26Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.10.15.23",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "credential_activation_abuse",
+        "scenario_id": "syn-std-th-6756"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-23T11:25:10Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "ListUsers",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.51",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "alice_lead_dev"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "permission_probing",
+        "scenario_id": "syn-seq-threat-0292"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-12T14:59:53Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2985"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-02T17:45:02Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.100.4.12",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-6513"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-28T17:22:50Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "GetObject",
+      "awsRegion": "us-east-2",
+      "sourceIPAddress": "104.244.76.13",
+      "userAgent": "Kali-Linux-CloudSploit",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "cloud_intrusion_threat",
+        "scenario_id": "syn-std-th-9717"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-17T12:40:51Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.10.40",
+      "userAgent": "Pacu/v1.4.0",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_user_policy",
+        "scenario_id": "syn-std-th-7262"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-02T02:44:29Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutUserPolicy",
+      "awsRegion": "eu-west-1",
+      "sourceIPAddress": "45.154.255.99",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "inline_policy_injection",
+        "scenario_id": "syn-std-th-5492"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-05-01T14:35:46Z",
+      "eventSource": "ec2.amazonaws.com",
+      "eventName": "DescribeInstances",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "104.244.76.13",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "cloud_intrusion_threat",
+        "scenario_id": "syn-std-th-2932"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-17T00:25:40Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "10.50.2.10",
+      "userAgent": "Kali-Linux-CloudSploit",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "role_inline_policy_backdoor",
+        "scenario_id": "syn-std-th-5171"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-11T12:48:04Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-4833"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-03T09:00:46Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.50.2.11",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-8113"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-11T15:33:09Z",
+      "eventSource": "ec2.amazonaws.com",
+      "eventName": "DescribeSecurityGroups",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2533"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-15T01:08:03Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "GetCallerIdentity",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "45.154.255.99",
+      "userAgent": "botocore/1.29.0 raw-script",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "discovery_reconnaissance",
+        "scenario_id": "syn-seq-threat-0004"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-17T17:44:49Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "us-east-2",
+      "sourceIPAddress": "45.154.255.99",
+      "userAgent": "Pacu/v1.4.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_user_policy",
+        "scenario_id": "syn-std-th-6160"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-03T11:51:30Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "ListRoles",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.50",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "alice_lead_dev"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2782"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-22T14:35:07Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "10.50.2.10",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-3214"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-06T17:03:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "eu-west-1",
+      "sourceIPAddress": "10.100.4.15",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "DevOpsAdminRole"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_user_policy",
+        "scenario_id": "syn-std-th-3345"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/JenkinsCICDRunner",
+        "userName": "JenkinsCICDRunner",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-07T15:50:32Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "172.16.42.110",
+      "userAgent": "aws-sdk-go/v2.1.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "JenkinsCICDRunner"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-3385"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-14T17:20:08Z",
+      "eventSource": "ec2.amazonaws.com",
+      "eventName": "DescribeInstances",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.50",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "alice_lead_dev"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2244"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-27T16:13:15Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "Python/3.11 aiobotocore/2.5.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-7820"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-20T16:19:49Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.10.15.23",
+      "userAgent": "Boto3/1.28.0 Python/3.10.6",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-7437"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-08T08:37:49Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "AssumeRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "104.244.76.13",
+      "userAgent": "curl/7.88.1",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "unauthorized_role_assumption",
+        "scenario_id": "syn-std-th-6561"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-17T12:15:25Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "AssumeRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-8227"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-05-01T19:22:40Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "us-west-2",
+      "sourceIPAddress": "192.168.10.40",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "target_admin_user"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-2796"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-20T23:50:46Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "sa-east-1",
+      "sourceIPAddress": "10.50.2.10",
+      "userAgent": "python-requests/2.31.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_user_policy",
+        "scenario_id": "syn-std-th-4572"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/JenkinsCICDRunner",
+        "userName": "JenkinsCICDRunner",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-30T13:46:19Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "104.244.76.13",
+      "userAgent": "botocore/1.29.0 raw-script",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "JenkinsCICDRunner"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "inline_policy_injection",
+        "scenario_id": "syn-std-th-9261"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-21T10:45:20Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PutRolePolicy",
+      "awsRegion": "eu-west-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-8196"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "true"
+          }
+        }
+      },
+      "eventTime": "2026-04-28T15:12:36Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-8544"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/DevOpsAdminRole",
+        "userName": "DevOpsAdminRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-04T11:24:41Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-east-2",
+      "sourceIPAddress": "192.168.10.40",
+      "userAgent": "curl/7.88.1",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "DevOpsAdminRole"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "pass_role_privilege_escalation",
+        "scenario_id": "syn-seq-threat-0123"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/alice_lead_dev",
+        "userName": "alice_lead_dev",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-05T01:17:43Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.50",
+      "userAgent": "AWS Management Console",
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform action",
+      "requestParameters": {
+        "userName": "alice_lead_dev"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_role_policy",
+        "scenario_id": "syn-std-th-6111"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-11T11:17:33Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "eu-west-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-9119"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/bob_contractor",
+        "userName": "bob_contractor",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-01T11:43:21Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "AssumeRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.168.1.88",
+      "userAgent": "AWS Management Console",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "bob_contractor"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-1496"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-15T09:18:42Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "PassRole",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.50.2.11",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-4868"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/AppBackendServiceRole",
+        "userName": "AppBackendServiceRole",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-29T16:45:30Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "ListBuckets",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.10.15.23",
+      "userAgent": "Python/3.11 aiobotocore/2.5.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "AppBackendServiceRole"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-9722"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:iam::123456789012:role/JenkinsCICDRunner",
+        "userName": "JenkinsCICDRunner",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-12T19:04:12Z",
+      "eventSource": "sts.amazonaws.com",
+      "eventName": "GetCallerIdentity",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "10.200.1.6",
+      "userAgent": "aws-sdk-go/v2.1.0",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "JenkinsCICDRunner"
+      },
+      "_ground_truth": 0,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "none",
+        "scenario_id": "syn-std-bg-8978"
+      }
+    },
+    {
+      "eventVersion": "1.08",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/carol_secops",
+        "userName": "carol_secops",
+        "sessionContext": {
+          "attributes": {
+            "mfaAuthenticated": "false"
+          }
+        }
+      },
+      "eventTime": "2026-04-17T23:30:45Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "ap-southeast-1",
+      "sourceIPAddress": "185.220.101.5",
+      "userAgent": "aws-cli/2.11.0 Python/3.11.2",
+      "errorCode": null,
+      "errorMessage": null,
+      "requestParameters": {
+        "userName": "carol_secops"
+      },
+      "_ground_truth": 1,
+      "_metadata": {
+        "data_source": "synthetic",
+        "attack_type": "privilege_escalation_user_policy",
+        "scenario_id": "syn-std-th-7557"
+      }
+    }
+  ]
+}

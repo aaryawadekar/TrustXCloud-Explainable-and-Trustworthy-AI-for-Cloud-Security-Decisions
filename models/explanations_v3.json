@@ -1,0 +1,1946 @@
+{
+  "1. True Benign (Normal Baseline)": {
+    "metadata": {
+      "event_name": "PutRolePolicy",
+      "event_source": "iam.amazonaws.com",
+      "identity": "JenkinsCICDRunner",
+      "ground_truth": 0,
+      "data_source": "synthetic",
+      "attack_type": "none"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "BENIGN",
+        "threat_probability": 0.0005,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 1.0,
+            "contribution": -3.0919,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 2,
+            "feature": "event_hour",
+            "feature_value": 20.0,
+            "contribution": -1.8297,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 3,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 3.0,
+            "contribution": -0.4638,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 4,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": -0.4601,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 5,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": -0.3893,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 6,
+            "feature": "error_status",
+            "feature_value": 0.0,
+            "contribution": -0.2794,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "BENIGN",
+        "threat_probability": 0.0002,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 3.0,
+            "contribution": 0.2779,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 1.0,
+            "contribution": 0.1952,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 3,
+            "feature": "identity_type_enc",
+            "feature_value": 0.0,
+            "contribution": 0.1519,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Identity principal classification (IAMUser, AssumedRole, Root)"
+          },
+          {
+            "ranking": 4,
+            "feature": "mfa_authenticated",
+            "feature_value": 0.0,
+            "contribution": 0.1403,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 5,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": 0.0621,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 6,
+            "feature": "event_source_enc",
+            "feature_value": 2.0,
+            "contribution": 0.0596,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS service domain (iam, sts, ec2, s3)"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity > 0.00",
+            "contribution": -0.4349,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "target_user_is_different <= 0.00",
+            "contribution": -0.2802,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "is_off_hours <= 0.00",
+            "contribution": -0.2711,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "event_hour > 17.00",
+            "contribution": -0.1116,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "aws_region_enc <= 3.00",
+            "contribution": 0.1084,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "error_status <= 0.00",
+            "contribution": -0.1034,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_local_true_benign.png"
+  },
+  "2. True Threat (Confirmed Intrusion)": {
+    "metadata": {
+      "event_name": "AttachUserPolicy",
+      "event_source": "iam.amazonaws.com",
+      "identity": "carol_secops",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "privilege_escalation_user_policy"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9984,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 6.38,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 1.0897,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 3,
+            "feature": "mfa_authenticated",
+            "feature_value": 1.0,
+            "contribution": -1.0231,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 4,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.6022,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 5,
+            "feature": "event_hour",
+            "feature_value": 22.0,
+            "contribution": -0.331,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 6,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": -0.2174,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 1.0,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 0.7806,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "event_name_enc",
+            "feature_value": 2.0,
+            "contribution": 0.0625,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS API event name category"
+          },
+          {
+            "ranking": 3,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.0323,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 4,
+            "feature": "mfa_authenticated",
+            "feature_value": 1.0,
+            "contribution": 0.0294,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 5,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.025,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 6,
+            "feature": "call_frequency_10m",
+            "feature_value": 1.0,
+            "contribution": 0.0237,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Number of API calls dispatched by identity within rolling 10-minute window"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "user_agent_cat_enc > 3.00",
+            "contribution": 0.4977,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4265,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2639,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "target_user_is_different <= 0.00",
+            "contribution": -0.2534,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "event_hour > 17.00",
+            "contribution": -0.1151,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.115,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_local_true_threat.png"
+  },
+  "3. False Positive (Benign Flagged as Threat)": {
+    "metadata": {
+      "event_name": "GetCallerIdentity",
+      "event_source": "sts.amazonaws.com",
+      "identity": "bob_contractor",
+      "ground_truth": 0,
+      "data_source": "synthetic",
+      "attack_type": "none"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.6369,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 1.7843,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 2,
+            "feature": "mfa_authenticated",
+            "feature_value": 1.0,
+            "contribution": -1.2731,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 3,
+            "feature": "aws_region_enc",
+            "feature_value": 0.0,
+            "contribution": 0.7988,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 4,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": -0.5528,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 5,
+            "feature": "event_hour",
+            "feature_value": 21.0,
+            "contribution": -0.5138,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 6,
+            "feature": "event_source_enc",
+            "feature_value": 4.0,
+            "contribution": 0.3803,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "AWS service domain (iam, sts, ec2, s3)"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.989,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.2413,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 0.1501,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 3,
+            "feature": "mfa_authenticated",
+            "feature_value": 1.0,
+            "contribution": 0.1385,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 4,
+            "feature": "aws_region_enc",
+            "feature_value": 0.0,
+            "contribution": 0.1074,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 5,
+            "feature": "identity_type_enc",
+            "feature_value": 1.0,
+            "contribution": 0.0996,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Identity principal classification (IAMUser, AssumedRole, Root)"
+          },
+          {
+            "ranking": 6,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": 0.0989,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4553,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2545,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different <= 0.00",
+            "contribution": -0.2446,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "event_hour > 17.00",
+            "contribution": -0.1217,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "error_status <= 0.00",
+            "contribution": -0.1043,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc <= 3.00",
+            "contribution": 0.0893,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_local_false_positive.png"
+  },
+  "4. False Negative (Stealth Threat Missed)": {
+    "metadata": {
+      "event_name": "DescribeSecurityGroups",
+      "event_source": "ec2.amazonaws.com",
+      "identity": "AppBackendServiceRole",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "cloud_intrusion_threat"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "BENIGN",
+        "threat_probability": 0.0912,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": -0.5776,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 2,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 3.0,
+            "contribution": -0.3207,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 3,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": -0.3143,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_source_enc",
+            "feature_value": 0.0,
+            "contribution": -0.3125,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "AWS service domain (iam, sts, ec2, s3)"
+          },
+          {
+            "ranking": 5,
+            "feature": "error_status",
+            "feature_value": 0.0,
+            "contribution": -0.29,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": -0.2611,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "BENIGN",
+        "threat_probability": 0.0833,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": 0.2374,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 2,
+            "feature": "error_status",
+            "feature_value": 0.0,
+            "contribution": 0.1673,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 3,
+            "feature": "identity_type_enc",
+            "feature_value": 0.0,
+            "contribution": 0.1387,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Identity principal classification (IAMUser, AssumedRole, Root)"
+          },
+          {
+            "ranking": 4,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 3.0,
+            "contribution": 0.1353,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 5,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": 0.1338,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.0609,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4385,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_off_hours <= 0.00",
+            "contribution": -0.2703,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different <= 0.00",
+            "contribution": -0.267,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "error_status <= 0.00",
+            "contribution": -0.1083,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "12.00 < event_hour <= 17.00",
+            "contribution": 0.081,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc <= 3.00",
+            "contribution": 0.0736,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_local_false_negative.png"
+  },
+  "Attack Scenario: privilege_escalation_user_policy": {
+    "metadata": {
+      "event_name": "AttachUserPolicy",
+      "event_source": "iam.amazonaws.com",
+      "identity": "carol_secops",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "privilege_escalation_user_policy"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9984,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 6.38,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 1.0897,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 3,
+            "feature": "mfa_authenticated",
+            "feature_value": 1.0,
+            "contribution": -1.0231,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 4,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.6022,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 5,
+            "feature": "event_hour",
+            "feature_value": 22.0,
+            "contribution": -0.331,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 6,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": -0.2174,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 1.0,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 0.7806,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "event_name_enc",
+            "feature_value": 2.0,
+            "contribution": 0.0625,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS API event name category"
+          },
+          {
+            "ranking": 3,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.0323,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 4,
+            "feature": "mfa_authenticated",
+            "feature_value": 1.0,
+            "contribution": 0.0294,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 5,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.025,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 6,
+            "feature": "call_frequency_10m",
+            "feature_value": 1.0,
+            "contribution": 0.0237,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Number of API calls dispatched by identity within rolling 10-minute window"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "user_agent_cat_enc > 3.00",
+            "contribution": 0.4943,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4214,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2676,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "target_user_is_different <= 0.00",
+            "contribution": -0.2534,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "event_hour > 17.00",
+            "contribution": -0.121,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc > 3.00",
+            "contribution": -0.0866,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_user_policy.png"
+  },
+  "Attack Scenario: inline_policy_injection": {
+    "metadata": {
+      "event_name": "PutUserPolicy",
+      "event_source": "iam.amazonaws.com",
+      "identity": "AppBackendServiceRole",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "inline_policy_injection"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9844,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 2.7749,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 1.2618,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 3,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.7272,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_hour",
+            "feature_value": 21.0,
+            "contribution": -0.6142,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 5,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": -0.2913,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.2512,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9997,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 0.3093,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_privilege_action",
+            "feature_value": 1.0,
+            "contribution": 0.2174,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API method belongs to high-privilege IAM management (policy attachment, key creation, role assumption)"
+          },
+          {
+            "ranking": 3,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 0.2028,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_name_enc",
+            "feature_value": 20.0,
+            "contribution": 0.0652,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS API event name category"
+          },
+          {
+            "ranking": 5,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.0556,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 6,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": 0.0312,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4543,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2724,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different > 0.00",
+            "contribution": 0.2639,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "event_hour > 17.00",
+            "contribution": -0.1099,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.104,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc <= 3.00",
+            "contribution": 0.0916,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_inline_user_policy.png"
+  },
+  "Attack Scenario: privilege_escalation_role_policy": {
+    "metadata": {
+      "event_name": "AttachRolePolicy",
+      "event_source": "iam.amazonaws.com",
+      "identity": "carol_secops",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "privilege_escalation_role_policy"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9996,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 5.228,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 1.1907,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 3,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 1.0612,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_hour",
+            "feature_value": 21.0,
+            "contribution": -0.617,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 5,
+            "feature": "identity_type_enc",
+            "feature_value": 1.0,
+            "contribution": 0.3778,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Identity principal classification (IAMUser, AssumedRole, Root)"
+          },
+          {
+            "ranking": 6,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.3468,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9937,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "call_frequency_10m",
+            "feature_value": 0.0,
+            "contribution": 0.2228,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Number of API calls dispatched by identity within rolling 10-minute window"
+          },
+          {
+            "ranking": 2,
+            "feature": "event_hour",
+            "feature_value": 21.0,
+            "contribution": 0.1632,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 3,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 0.1529,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 4,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.116,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 5,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 0.0836,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_privilege_action",
+            "feature_value": 1.0,
+            "contribution": 0.0712,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API method belongs to high-privilege IAM management (policy attachment, key creation, role assumption)"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "user_agent_cat_enc > 3.00",
+            "contribution": 0.4925,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4422,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2638,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "target_user_is_different > 0.00",
+            "contribution": 0.2565,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.1158,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc > 3.00",
+            "contribution": -0.0969,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_role_policy.png"
+  },
+  "Attack Scenario: role_inline_policy_backdoor": {
+    "metadata": {
+      "event_name": "PutRolePolicy",
+      "event_source": "iam.amazonaws.com",
+      "identity": "DevOpsAdminRole",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "role_inline_policy_backdoor"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9979,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 2.0,
+            "contribution": 3.7698,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 2.3248,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 3,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.7931,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 4,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": -0.3948,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 5,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.2617,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 6,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": -0.2182,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "AWS geographic datacenter region"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9723,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 0.423,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_privilege_action",
+            "feature_value": 1.0,
+            "contribution": 0.1859,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API method belongs to high-privilege IAM management (policy attachment, key creation, role assumption)"
+          },
+          {
+            "ranking": 3,
+            "feature": "event_source_enc",
+            "feature_value": 2.0,
+            "contribution": 0.1097,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS service domain (iam, sts, ec2, s3)"
+          },
+          {
+            "ranking": 4,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": 0.0577,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 5,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.0576,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 6,
+            "feature": "aws_region_enc",
+            "feature_value": 3.0,
+            "contribution": 0.0485,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4142,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_off_hours <= 0.00",
+            "contribution": -0.2698,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different > 0.00",
+            "contribution": 0.268,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.1103,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "aws_region_enc <= 3.00",
+            "contribution": 0.0969,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "0.00 < user_agent_cat_enc <= 2.00",
+            "contribution": -0.0869,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_role_inline.png"
+  },
+  "Attack Scenario: rogue_credential_creation": {
+    "metadata": {
+      "event_name": "CreateAccessKey",
+      "event_source": "iam.amazonaws.com",
+      "identity": "carol_secops",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "rogue_credential_creation"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.5479,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.781,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 2,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 0.0,
+            "contribution": -0.6778,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 3,
+            "feature": "mfa_authenticated",
+            "feature_value": 0.0,
+            "contribution": 0.5616,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 4,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": -0.5488,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 5,
+            "feature": "identity_type_enc",
+            "feature_value": 1.0,
+            "contribution": 0.4444,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Identity principal classification (IAMUser, AssumedRole, Root)"
+          },
+          {
+            "ranking": 6,
+            "feature": "target_user_is_different",
+            "feature_value": 0.0,
+            "contribution": -0.3573,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "BENIGN",
+        "threat_probability": 0.4914,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": 0.2994,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 2,
+            "feature": "mfa_authenticated",
+            "feature_value": 0.0,
+            "contribution": 0.1373,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Call was protected and verified by multi-factor authentication (MFA)"
+          },
+          {
+            "ranking": 3,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.1088,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 4,
+            "feature": "identity_type_enc",
+            "feature_value": 1.0,
+            "contribution": 0.1079,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Identity principal classification (IAMUser, AssumedRole, Root)"
+          },
+          {
+            "ranking": 5,
+            "feature": "aws_region_enc",
+            "feature_value": 5.0,
+            "contribution": 0.0867,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 6,
+            "feature": "event_hour",
+            "feature_value": 11.0,
+            "contribution": 0.0836,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4355,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_off_hours <= 0.00",
+            "contribution": -0.2746,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different <= 0.00",
+            "contribution": -0.2679,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "user_agent_cat_enc <= 0.00",
+            "contribution": -0.1553,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.1167,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc > 3.00",
+            "contribution": -0.0905,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_create_key.png"
+  },
+  "Attack Scenario: credential_activation_abuse": {
+    "metadata": {
+      "event_name": "UpdateAccessKey",
+      "event_source": "iam.amazonaws.com",
+      "identity": "DevOpsAdminRole",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "credential_activation_abuse"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9994,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 5.6914,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 1.587,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 3,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 0.886,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_hour",
+            "feature_value": 5.0,
+            "contribution": -0.2753,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Time of day (0-23 UTC) when the API call was executed"
+          },
+          {
+            "ranking": 5,
+            "feature": "error_status",
+            "feature_value": 0.0,
+            "contribution": -0.1766,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.1485,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9994,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 0.278,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_privilege_action",
+            "feature_value": 1.0,
+            "contribution": 0.2291,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API method belongs to high-privilege IAM management (policy attachment, key creation, role assumption)"
+          },
+          {
+            "ranking": 3,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 0.1639,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_name_enc",
+            "feature_value": 21.0,
+            "contribution": 0.1285,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS API event name category"
+          },
+          {
+            "ranking": 5,
+            "feature": "call_frequency_10m",
+            "feature_value": 1.0,
+            "contribution": 0.0417,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Number of API calls dispatched by identity within rolling 10-minute window"
+          },
+          {
+            "ranking": 6,
+            "feature": "error_status",
+            "feature_value": 0.0,
+            "contribution": 0.0376,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "user_agent_cat_enc > 3.00",
+            "contribution": 0.5157,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.442,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2627,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "target_user_is_different > 0.00",
+            "contribution": 0.2538,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "error_status <= 0.00",
+            "contribution": -0.1228,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc > 3.00",
+            "contribution": -0.0911,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_update_key.png"
+  },
+  "Attack Scenario: unauthorized_role_assumption": {
+    "metadata": {
+      "event_name": "AssumeRole",
+      "event_source": "sts.amazonaws.com",
+      "identity": "AppBackendServiceRole",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "unauthorized_role_assumption"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9486,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 2.2918,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 2,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.8,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 3,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 3.0,
+            "contribution": 0.4018,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 4,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": -0.3849,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 5,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.2487,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 6,
+            "feature": "event_name_enc",
+            "feature_value": 0.0,
+            "contribution": -0.1453,
+            "direction": "Negative (Supports Benign Attribution)",
+            "description": "AWS API event name category"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9446,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 0.4829,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_privilege_action",
+            "feature_value": 1.0,
+            "contribution": 0.095,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API method belongs to high-privilege IAM management (policy attachment, key creation, role assumption)"
+          },
+          {
+            "ranking": 3,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.0796,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_source_enc",
+            "feature_value": 4.0,
+            "contribution": 0.0722,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS service domain (iam, sts, ec2, s3)"
+          },
+          {
+            "ranking": 5,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.0641,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_off_hours",
+            "feature_value": 0.0,
+            "contribution": 0.0604,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4228,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_off_hours <= 0.00",
+            "contribution": -0.2752,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different > 0.00",
+            "contribution": 0.2739,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.1166,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "aws_region_enc > 3.00",
+            "contribution": -0.0833,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "2.00 < user_agent_cat_enc <= 3.00",
+            "contribution": -0.0428,
+            "direction": "Negative (Surrogate Benign Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_assume_role.png"
+  },
+  "Attack Scenario: pass_role_privilege_escalation": {
+    "metadata": {
+      "event_name": "PassRole",
+      "event_source": "iam.amazonaws.com",
+      "identity": "DevOpsAdminRole",
+      "ground_truth": 1,
+      "data_source": "synthetic",
+      "attack_type": "pass_role_privilege_escalation"
+    },
+    "explanation": {
+      "xgboost_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9998,
+        "base_expected_value": -0.2866,
+        "shap_attributions": [
+          {
+            "ranking": 1,
+            "feature": "user_agent_cat_enc",
+            "feature_value": 4.0,
+            "contribution": 4.9084,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Client software category (AWS Console, CLI, SDK, Script/Automated Tool)"
+          },
+          {
+            "ranking": 2,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 1.6435,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 3,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 0.8586,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 4,
+            "feature": "aws_region_enc",
+            "feature_value": 2.0,
+            "contribution": 0.6427,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "AWS geographic datacenter region"
+          },
+          {
+            "ranking": 5,
+            "feature": "error_status",
+            "feature_value": 1.0,
+            "contribution": 0.4334,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "API call resulted in an error or AccessDenied (permission probing / brute-force)"
+          },
+          {
+            "ranking": 6,
+            "feature": "is_new_ip_for_identity",
+            "feature_value": 0.0,
+            "contribution": 0.1338,
+            "direction": "Positive (Increases Threat Attribution)",
+            "description": "Source IP is unfamiliar or outside established historical baseline for this identity"
+          }
+        ]
+      },
+      "tabnet_inference": {
+        "decision": "THREAT",
+        "threat_probability": 0.9999,
+        "tabnet_attributions": [
+          {
+            "ranking": 1,
+            "feature": "is_privilege_action",
+            "feature_value": 1.0,
+            "contribution": 0.3769,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "API method belongs to high-privilege IAM management (policy attachment, key creation, role assumption)"
+          },
+          {
+            "ranking": 2,
+            "feature": "is_off_hours",
+            "feature_value": 1.0,
+            "contribution": 0.3378,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action occurred outside regular business hours (night, early morning, or unapproved shift)"
+          },
+          {
+            "ranking": 3,
+            "feature": "target_user_is_different",
+            "feature_value": 1.0,
+            "contribution": 0.0963,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "Action targets or modifies credentials/permissions of an entity different from the caller"
+          },
+          {
+            "ranking": 4,
+            "feature": "event_name_enc",
+            "feature_value": 18.0,
+            "contribution": 0.078,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS API event name category"
+          },
+          {
+            "ranking": 5,
+            "feature": "event_source_enc",
+            "feature_value": 2.0,
+            "contribution": 0.0452,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS service domain (iam, sts, ec2, s3)"
+          },
+          {
+            "ranking": 6,
+            "feature": "aws_region_enc",
+            "feature_value": 2.0,
+            "contribution": 0.0202,
+            "direction": "Attentive Focus (Active Step Saliency)",
+            "description": "AWS geographic datacenter region"
+          }
+        ]
+      },
+      "lime_perturbation_surrogate": {
+        "lime_attributions": [
+          {
+            "ranking": 1,
+            "feature_rule": "user_agent_cat_enc > 3.00",
+            "contribution": 0.4771,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 2,
+            "feature_rule": "is_new_ip_for_identity <= 0.00",
+            "contribution": 0.4415,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 3,
+            "feature_rule": "target_user_is_different > 0.00",
+            "contribution": 0.2717,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 4,
+            "feature_rule": "0.00 < is_off_hours <= 1.00",
+            "contribution": 0.2652,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 5,
+            "feature_rule": "error_status > 0.00",
+            "contribution": 0.1049,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          },
+          {
+            "ranking": 6,
+            "feature_rule": "aws_region_enc <= 3.00",
+            "contribution": 0.1013,
+            "direction": "Positive (Surrogate Threat Attribution)"
+          }
+        ]
+      }
+    },
+    "plot_saved": "C:\\Users\\HP\\Desktop\\explainable-cloud-security\\models\\plots_v3\\shap_attack_pass_role.png"
+  }
+}

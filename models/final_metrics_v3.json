@@ -1,0 +1,449 @@
+{
+  "xgboost_v3": {
+    "1. Synthetic Test Data": {
+      "dataset_partition": "1. Synthetic Test Data",
+      "sample_count": 2800,
+      "threat_count": 1202,
+      "benign_count": 1598,
+      "accuracy": 0.8979,
+      "precision": 0.9111,
+      "recall": 0.8444,
+      "f1": 0.8765,
+      "roc_auc": 0.9652,
+      "pr_auc": 0.961,
+      "false_positive_rate": 0.062,
+      "false_negative_rate": 0.1556,
+      "confusion_matrix": [
+        [
+          1499,
+          99
+        ],
+        [
+          187,
+          1015
+        ]
+      ],
+      "tn": 1499,
+      "fp": 99,
+      "fn": 187,
+      "tp": 1015
+    },
+    "2. Real Benign Telemetry": {
+      "dataset_partition": "2. Real Benign Telemetry",
+      "sample_count": 4,
+      "threat_count": 0,
+      "benign_count": 4,
+      "accuracy": 1.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "roc_auc": 1.0,
+      "pr_auc": 0.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "confusion_matrix": [
+        [
+          4,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "tn": 4,
+      "fp": 0,
+      "fn": 0,
+      "tp": 0,
+      "sample_size_warning": "This partition has only 4 samples (< 100). Metrics should be treated as indicative, not statistically reliable."
+    },
+    "3. Real Controlled AWS Attack Telemetry": {
+      "dataset_partition": "3. Real Controlled AWS Attack Telemetry",
+      "sample_count": 0,
+      "threat_count": 0,
+      "benign_count": 0,
+      "sample_size_warning": "This partition has 0 samples. No metrics can be computed. Run controlled_experiment_runner.py in live mode to generate real data."
+    },
+    "4. Time-Based Holdout Split": {
+      "dataset_partition": "4. Time-Based Holdout Split",
+      "sample_count": 2800,
+      "threat_count": 1159,
+      "benign_count": 1641,
+      "accuracy": 0.9046,
+      "precision": 0.928,
+      "recall": 0.8343,
+      "f1": 0.8787,
+      "roc_auc": 0.9639,
+      "pr_auc": 0.9583,
+      "false_positive_rate": 0.0457,
+      "false_negative_rate": 0.1657,
+      "confusion_matrix": [
+        [
+          1566,
+          75
+        ],
+        [
+          192,
+          967
+        ]
+      ],
+      "tn": 1566,
+      "fp": 75,
+      "fn": 192,
+      "tp": 967
+    },
+    "5. Identity-Holdout Split": {
+      "dataset_partition": "5. Identity-Holdout Split",
+      "sample_count": 2437,
+      "threat_count": 1065,
+      "benign_count": 1372,
+      "accuracy": 0.8629,
+      "precision": 0.8909,
+      "recall": 0.7822,
+      "f1": 0.833,
+      "roc_auc": 0.9429,
+      "pr_auc": 0.9389,
+      "false_positive_rate": 0.0743,
+      "false_negative_rate": 0.2178,
+      "confusion_matrix": [
+        [
+          1270,
+          102
+        ],
+        [
+          232,
+          833
+        ]
+      ],
+      "tn": 1270,
+      "fp": 102,
+      "fn": 232,
+      "tp": 833
+    }
+  },
+  "tabnet_v3": {
+    "1. Synthetic Test Data": {
+      "dataset_partition": "1. Synthetic Test Data",
+      "sample_count": 2800,
+      "threat_count": 1202,
+      "benign_count": 1598,
+      "accuracy": 0.8968,
+      "precision": 0.9286,
+      "recall": 0.8228,
+      "f1": 0.8725,
+      "roc_auc": 0.9615,
+      "pr_auc": 0.9585,
+      "false_positive_rate": 0.0476,
+      "false_negative_rate": 0.1772,
+      "confusion_matrix": [
+        [
+          1522,
+          76
+        ],
+        [
+          213,
+          989
+        ]
+      ],
+      "tn": 1522,
+      "fp": 76,
+      "fn": 213,
+      "tp": 989
+    },
+    "2. Real Benign Telemetry": {
+      "dataset_partition": "2. Real Benign Telemetry",
+      "sample_count": 4,
+      "threat_count": 0,
+      "benign_count": 4,
+      "accuracy": 1.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "roc_auc": 1.0,
+      "pr_auc": 0.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "confusion_matrix": [
+        [
+          4,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "tn": 4,
+      "fp": 0,
+      "fn": 0,
+      "tp": 0,
+      "sample_size_warning": "This partition has only 4 samples (< 100). Metrics should be treated as indicative, not statistically reliable."
+    },
+    "3. Real Controlled AWS Attack Telemetry": {
+      "dataset_partition": "3. Real Controlled AWS Attack Telemetry",
+      "sample_count": 0,
+      "threat_count": 0,
+      "benign_count": 0,
+      "sample_size_warning": "This partition has 0 samples. No metrics can be computed. Run controlled_experiment_runner.py in live mode to generate real data."
+    },
+    "4. Time-Based Holdout Split": {
+      "dataset_partition": "4. Time-Based Holdout Split",
+      "sample_count": 2800,
+      "threat_count": 1159,
+      "benign_count": 1641,
+      "accuracy": 0.8979,
+      "precision": 0.9318,
+      "recall": 0.8128,
+      "f1": 0.8682,
+      "roc_auc": 0.955,
+      "pr_auc": 0.951,
+      "false_positive_rate": 0.042,
+      "false_negative_rate": 0.1872,
+      "confusion_matrix": [
+        [
+          1572,
+          69
+        ],
+        [
+          217,
+          942
+        ]
+      ],
+      "tn": 1572,
+      "fp": 69,
+      "fn": 217,
+      "tp": 942
+    },
+    "5. Identity-Holdout Split": {
+      "dataset_partition": "5. Identity-Holdout Split",
+      "sample_count": 2437,
+      "threat_count": 1065,
+      "benign_count": 1372,
+      "accuracy": 0.8551,
+      "precision": 0.914,
+      "recall": 0.738,
+      "f1": 0.8166,
+      "roc_auc": 0.9328,
+      "pr_auc": 0.9299,
+      "false_positive_rate": 0.0539,
+      "false_negative_rate": 0.262,
+      "confusion_matrix": [
+        [
+          1298,
+          74
+        ],
+        [
+          279,
+          786
+        ]
+      ],
+      "tn": 1298,
+      "fp": 74,
+      "fn": 279,
+      "tp": 786
+    }
+  },
+  "threshold_analysis": {
+    "0.1": {
+      "precision": 0.6556,
+      "recall": 0.985,
+      "f1": 0.7872,
+      "fpr": 0.3892,
+      "fnr": 0.015
+    },
+    "0.2": {
+      "precision": 0.7513,
+      "recall": 0.9501,
+      "f1": 0.8391,
+      "fpr": 0.2365,
+      "fnr": 0.0499
+    },
+    "0.3": {
+      "precision": 0.8312,
+      "recall": 0.9135,
+      "f1": 0.8704,
+      "fpr": 0.1395,
+      "fnr": 0.0865
+    },
+    "0.4": {
+      "precision": 0.8794,
+      "recall": 0.8794,
+      "f1": 0.8794,
+      "fpr": 0.0907,
+      "fnr": 0.1206
+    },
+    "0.5": {
+      "precision": 0.9111,
+      "recall": 0.8444,
+      "f1": 0.8765,
+      "fpr": 0.062,
+      "fnr": 0.1556
+    },
+    "0.6": {
+      "precision": 0.9389,
+      "recall": 0.8178,
+      "f1": 0.8742,
+      "fpr": 0.0401,
+      "fnr": 0.1822
+    },
+    "0.7": {
+      "precision": 0.9609,
+      "recall": 0.7779,
+      "f1": 0.8598,
+      "fpr": 0.0238,
+      "fnr": 0.2221
+    },
+    "0.8": {
+      "precision": 0.9773,
+      "recall": 0.7171,
+      "f1": 0.8273,
+      "fpr": 0.0125,
+      "fnr": 0.2829
+    },
+    "0.9": {
+      "precision": 0.9911,
+      "recall": 0.6514,
+      "f1": 0.7861,
+      "fpr": 0.0044,
+      "fnr": 0.3486
+    }
+  },
+  "attack_type_performance": {
+    "none": {
+      "count": 1598,
+      "accuracy": 0.938,
+      "detection_rate": 0.938
+    },
+    "pass_role_privilege_escalation": {
+      "count": 96,
+      "accuracy": 0.8229,
+      "detection_rate": 0.8229
+    },
+    "credential_activation_abuse": {
+      "count": 118,
+      "accuracy": 0.8559,
+      "detection_rate": 0.8559
+    },
+    "rogue_credential_creation": {
+      "count": 101,
+      "accuracy": 0.8812,
+      "detection_rate": 0.8812
+    },
+    "permission_probing": {
+      "count": 75,
+      "accuracy": 0.8133,
+      "detection_rate": 0.8133
+    },
+    "inline_policy_injection": {
+      "count": 111,
+      "accuracy": 0.8829,
+      "detection_rate": 0.8829
+    },
+    "privilege_escalation_role_policy": {
+      "count": 111,
+      "accuracy": 0.8198,
+      "detection_rate": 0.8198
+    },
+    "cloud_intrusion_threat": {
+      "count": 206,
+      "accuracy": 0.7961,
+      "detection_rate": 0.7961
+    },
+    "privilege_escalation_user_policy": {
+      "count": 109,
+      "accuracy": 0.8991,
+      "detection_rate": 0.8991
+    },
+    "discovery_reconnaissance": {
+      "count": 71,
+      "accuracy": 0.9014,
+      "detection_rate": 0.9014
+    },
+    "unauthorized_role_assumption": {
+      "count": 115,
+      "accuracy": 0.8696,
+      "detection_rate": 0.8696
+    },
+    "role_inline_policy_backdoor": {
+      "count": 89,
+      "accuracy": 0.7865,
+      "detection_rate": 0.7865
+    }
+  },
+  "event_name_performance": {
+    "PutUserPolicy": {
+      "count": 253,
+      "accuracy": 0.9249,
+      "f1": 0.9116
+    },
+    "UpdateAccessKey": {
+      "count": 250,
+      "accuracy": 0.912,
+      "f1": 0.9018
+    },
+    "AttachRolePolicy": {
+      "count": 247,
+      "accuracy": 0.8907,
+      "f1": 0.8708
+    },
+    "AttachUserPolicy": {
+      "count": 246,
+      "accuracy": 0.9268,
+      "f1": 0.9159
+    },
+    "AssumeRole": {
+      "count": 239,
+      "accuracy": 0.9121,
+      "f1": 0.905
+    },
+    "CreateAccessKey": {
+      "count": 233,
+      "accuracy": 0.8927,
+      "f1": 0.8768
+    },
+    "PutRolePolicy": {
+      "count": 229,
+      "accuracy": 0.8646,
+      "f1": 0.8187
+    },
+    "PassRole": {
+      "count": 210,
+      "accuracy": 0.8857,
+      "f1": 0.8681
+    },
+    "GetCallerIdentity": {
+      "count": 170,
+      "accuracy": 0.8941,
+      "f1": 0.9109
+    },
+    "DescribeInstances": {
+      "count": 133,
+      "accuracy": 0.9248,
+      "f1": 0.8077
+    },
+    "DescribeSecurityGroups": {
+      "count": 131,
+      "accuracy": 0.8931,
+      "f1": 0.7407
+    },
+    "ListBuckets": {
+      "count": 125,
+      "accuracy": 0.856,
+      "f1": 0.8364
+    }
+  },
+  "identity_type_performance": {
+    "AssumedRole": {
+      "count": 1323,
+      "accuracy": 0.8738,
+      "precision": 0.9047,
+      "recall": 0.7669
+    },
+    "IAMUser": {
+      "count": 1477,
+      "accuracy": 0.9194,
+      "precision": 0.9155,
+      "recall": 0.906
+    }
+  }
+}
