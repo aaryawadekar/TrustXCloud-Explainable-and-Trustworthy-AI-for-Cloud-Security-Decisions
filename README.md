@@ -162,6 +162,22 @@ result = analyzer.analyze_event({
 analyzer.print_decision_report(result)
 ```
 
+### 5. Run the FastAPI Backend Bridge
+Exposes REST endpoints (`/api/v1/analyze`, `/api/v1/metrics`, `/api/v1/scenarios`) bridging the ML engine to web clients:
+```bash
+uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 6. Run the Next.js Explainable SOC Panel UI
+Enterprise hardware panel dashboard built with Next.js 14, TypeScript, and high-contrast hardware SOC themes:
+```bash
+cd frontend
+npm install
+npm run dev    # Development mode on http://localhost:3000
+# or for production:
+npm run build && npm start
+```
+
 ---
 
 ## 8. LLM Narration Layer & Preserved Fallback Modes
