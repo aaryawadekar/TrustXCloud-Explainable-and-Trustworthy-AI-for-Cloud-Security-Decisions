@@ -15,6 +15,12 @@ lime>=0.2.0
 google-genai>=1.0.0
 boto3>=1.34.0
 
+# Backend
+fastapi>=0.115.0
+unicorn[standard]>=0.30.0
+pydantic>=2.0.0
+python-multipart>=0.0.9
+
 # Utilities & Visualization
 matplotlib>=3.8.0
 tabulate>=0.9.0
