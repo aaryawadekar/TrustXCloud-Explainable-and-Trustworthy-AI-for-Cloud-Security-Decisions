@@ -1,3 +1,7 @@
+# Virtual Environments
+.venv/
+venv/
+
 # Environment and Secrets
 .env
 *.env
@@ -14,3 +18,5 @@ __pycache__/
 # Artifacts & Temporary Files
 scratch/
 *.log
+
+data/raw_experiments/
