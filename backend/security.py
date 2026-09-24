@@ -165,6 +165,8 @@ def verify_google_id_token(
 
 def get_google_oauth_url(state: str) -> str:
     """Generates the Google OAuth 2.0 authorization redirect URL."""
+    from urllib.parse import urlencode
+
     base_url = "https://accounts.google.com/o/oauth2/v2/auth"
     params = {
         "client_id": settings.GOOGLE_CLIENT_ID,
@@ -175,8 +177,9 @@ def get_google_oauth_url(state: str) -> str:
         "access_type": "offline",
         "prompt": "consent",
     }
-    encoded_params = "&".join(f"{k}={httpx.URL('', params={k: v}).query.decode('utf-8')}" for k, v in params.items())
+    encoded_params = urlencode(params)
     return f"{base_url}?{encoded_params}"
+
 
 
 def exchange_google_code_for_tokens(code: str) -> Dict[str, Any]:
