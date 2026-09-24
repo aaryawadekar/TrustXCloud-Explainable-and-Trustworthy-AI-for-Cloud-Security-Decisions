@@ -66,6 +66,14 @@ logger = logging.getLogger("trustxcloud_backend")
 async def lifespan(app: FastAPI):
     logger.info("Initializing TrustXCloud Backend...")
 
+    # 0. Initialize Database Schema (Users, etc.)
+    from backend.database import init_db
+    try:
+        init_db()
+        logger.info("Database schema initialized.")
+    except Exception as e:
+        logger.warning(f"Database schema initialization warning: {e}")
+
     # 1. Initialize Persistence Layer
     dynamodb_repo = DynamoDBRepository()
     app.state.dynamodb_repo = dynamodb_repo
@@ -131,6 +139,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Authentication Routers
+from backend.routers import auth as auth_router
+app.include_router(auth_router.router, prefix=f"{settings.API_V1_STR}/auth")
+app.include_router(auth_router.router, prefix="/auth")
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────

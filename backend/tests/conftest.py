@@ -101,16 +101,50 @@ class MockCloudSecurityAnalyzer:
         }
 
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+from backend.database import Base, get_db
+
+
 @pytest.fixture(scope="session")
 def mock_analyzer():
     return MockCloudSecurityAnalyzer()
 
 
+@pytest.fixture(scope="function")
+def test_db():
+    """Provides an isolated in-memory SQLite database for each test function."""
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(bind=engine)
+    TestingSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    db = TestingSession()
+    try:
+        yield db
+    finally:
+        db.close()
+        Base.metadata.drop_all(bind=engine)
+
+
 @pytest.fixture
-def client(mock_analyzer):
-    """Provides a TestClient with preloaded mock dependencies."""
+def client(mock_analyzer, test_db):
+    """Provides a TestClient with preloaded mock dependencies and isolated DB."""
+    def override_get_db():
+        try:
+            yield test_db
+        finally:
+            pass
+
+    app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
         # Override analyzer with mock
         app.state.analyzer = mock_analyzer
-        app.state.analysis_service.analyzer = mock_analyzer
+        if hasattr(app.state, "analysis_service") and app.state.analysis_service:
+            app.state.analysis_service.analyzer = mock_analyzer
         yield test_client
+    app.dependency_overrides.clear()
+

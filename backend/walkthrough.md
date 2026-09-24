@@ -18,20 +18,32 @@ A production-grade **FastAPI backend layer** has been built for the **TrustXClou
 backend/
 ├── __init__.py                                 # Package metadata (v3.0.0)
 ├── config.py                                   # Centralized configuration, thresholds & env vars
-├── schemas.py                                  # Pydantic v2 schemas mirroring frontend TypeScript types
-├── dependencies.py                             # Dependency injection with resilient lazy fallbacks
-├── main.py                                     # FastAPI entrypoint, lifespan handler, CORS, global error handlers
+├── database.py                                 # SQLAlchemy database engine, session factory & SQLite setup
+├── security.py                                 # Argon2 password hashing, JWT HS256, Google OIDC validation
+├── schemas.py                                  # Pydantic v2 schemas for SOC and Authentication
+├── dependencies.py                             # Dependency injection with get_current_user & require_role
+├── main.py                                     # FastAPI entrypoint, lifespan, CORS, error handlers, routers
 │
 ├── adapters/
 │   ├── __init__.py
 │   └── analysis_adapter.py                     # Pure converter: ML/XAI dictionary -> SecurityAnalysis
 │
+├── models/
+│   ├── __init__.py
+│   └── user.py                                 # SQLAlchemy User entity supporting local & Google OAuth
+│
 ├── repositories/
 │   ├── __init__.py
-│   └── dynamodb_repository.py                  # Persistence abstraction with live DynamoDB & local fallback
+│   ├── dynamodb_repository.py                  # Persistence abstraction with live DynamoDB & local fallback
+│   └── user_repository.py                      # User persistence & unique lookups (id, email, username, google_id)
+│
+├── routers/
+│   ├── __init__.py
+│   └── auth.py                                 # Authentication endpoints (/register, /login, /google, /me)
 │
 ├── services/
 │   ├── __init__.py
+│   ├── auth_service.py                         # Registration, local login, Google OAuth verification, JWT
 │   ├── events_service.py                       # CloudTrail event ingestion, filtering & timeline synthesis
 │   ├── analysis_service.py                     # ML pipeline orchestration, caching & persistence
 │   ├── alerts_service.py                       # Incident management, alert filtering & status mutations
@@ -41,88 +53,91 @@ backend/
 │
 └── tests/
     ├── __init__.py
-    ├── conftest.py                             # High-speed mock analyzer fixtures for sub-second testing
+    ├── conftest.py                             # High-speed mock analyzer and isolated in-memory DB fixtures
     ├── test_health.py                          # Validates /health status and version information
     ├── test_events.py                          # Validates list, pagination, filter, single event & timeline
     ├── test_analysis.py                        # Validates ML analysis execution, SHAP factors & metadata
-    └── test_alerts.py                          # Validates alerts, status updates, dashboard KPIs & model metrics
+    ├── test_alerts.py                          # Validates alerts, status updates, dashboard KPIs & model metrics
+    └── test_auth.py                            # 23 tests: registration, login, JWT, Google OAuth, enumeration, RBAC
 ```
 
 ---
 
 ## API Endpoints Reference
 
-All endpoints are served under `/api/v1` (with `/health` at root) and documented via interactive Swagger UI at `/docs`.
+All endpoints are served under `/api/v1` (with `/health` and `/auth` aliases) and documented via interactive Swagger UI at `/docs`.
 
-| Method | Path | Description | Frontend Consumer |
+| Method | Path | Description | Access |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/health` | Service health status, version, and analyzer state | Health monitoring |
-| `GET` | `/api/v1/events` | List security events with filtering (`limit`, `offset`, `classification`, `user`, `search`) | Events Service |
-| `GET` | `/api/v1/events/{event_id}` | Retrieve a single security event by ID | Event Detail |
-| `GET` | `/api/v1/events/{event_id}/timeline` | Retrieve chronological timeline context around event | Event Timeline |
-| `GET` | `/api/v1/analysis/{event_id}` | Run/retrieve ML/XAI analysis (SHAP factors, LLM narrative) | Analysis Panel |
-| `GET` | `/api/v1/alerts` | List security alerts (`riskLevel`, `service`, `user`, `search`, `status`) | Alerts Page |
-| `GET` | `/api/v1/alerts/{alert_id}` | Retrieve single alert by ID or associated event ID | Alert Detail |
-| `PATCH` | `/api/v1/alerts/{alert_id}` | Update alert status (`active`, `investigating`, `resolved`, `dismissed`) | Alert Actions |
-| `GET` | `/api/v1/dashboard/overview` | Aggregated SOC KPIs, risk distributions, trends & recent alerts | Dashboard Page |
-| `GET` | `/api/v1/activity/{user}` | IAM identity activity history, risk trend & actions | Identity Panel |
-| `GET` | `/api/v1/models/performance` | Real V3 model evaluation metrics & confusion matrices | Models Page |
-
----
-
-## Architecture & Integration Details
-
-### 1. Risk Score & Classification Mapping (`backend/adapters/analysis_adapter.py`)
-- **Risk Score Derivation**:
-  $$P(\text{threat}) = \frac{P_{\text{xgboost}} + P_{\text{tabnet}}}{2.0}$$
-  `riskScore` is defined as the continuous ensemble threat probability $P(\text{threat}) \in [0.0, 1.0]$. For events with `decision == 'ERROR'`, it defaults safely to `0.50`.
-- **Classification Mapping**:
-  - `BENIGN`:
-    - $P(\text{threat}) < 0.25 \implies \text{'normal'}$
-    - $P(\text{threat}) \ge 0.25 \implies \text{'suspicious'}$
-  - `THREAT`:
-    - $P(\text{threat}) \ge 0.85 \implies \text{'critical'}$
-    - $P(\text{threat}) < 0.85 \implies \text{'high_risk'}$
-  - `ERROR`:
-    - Borderline/malformed $\implies \text{'suspicious'}$
-
-### 2. SHAP & LIME to Frontend Factors
-Top SHAP attribution rankings are transformed into `ExplanationFactor` models:
-- Feature keys (`call_frequency_10m`, `is_new_ip_for_identity`) mapped to human labels.
-- Continuous signed SHAP values assigned to `impact` ($> 0$ elevates risk, $< 0$ supports benign).
-- Categorized into `identity`, `network`, `action`, `time`, or `resource`.
-
-### 3. Transparent Storage & Offline Fallback
-- `DynamoDBRepository` wraps `aws.dynamodb_store.DynamoDBSecurityStore`.
-- When live AWS credentials are not configured, it logs and stores decisions seamlessly in an in-memory/local disk store without throwing unhandled exceptions.
+| `GET` | `/health` | Service health status, version, and analyzer state | Public |
+| `POST` | `/api/v1/auth/register` | Register local account (username, email, password) | Public |
+| `POST` | `/api/v1/auth/login` | Authenticate local account (username/email + password) | Public |
+| `GET` | `/api/v1/auth/google` | Generate Google OAuth authorization URL | Public |
+| `GET` | `/api/v1/auth/google/callback` | Handle Google OAuth redirect code exchange | Public |
+| `POST` | `/api/v1/auth/google` | Exchange Google ID token (SPA Continue with Google) | Public |
+| `GET` | `/api/v1/auth/me` | Retrieve authenticated user profile | **Bearer JWT** |
+| `GET` | `/api/v1/events` | List security events with filtering | Public |
+| `GET` | `/api/v1/events/{event_id}` | Retrieve a single security event by ID | Public |
+| `GET` | `/api/v1/events/{event_id}/timeline` | Retrieve chronological timeline context around event | Public |
+| `GET` | `/api/v1/analysis/{event_id}` | Run/retrieve ML/XAI analysis (SHAP factors, LLM narrative) | Public |
+| `GET` | `/api/v1/alerts` | List security alerts (`riskLevel`, `service`, `user`, `status`) | Public |
+| `GET` | `/api/v1/alerts/{alert_id}` | Retrieve single alert by ID or associated event ID | Public |
+| `PATCH` | `/api/v1/alerts/{alert_id}` | Update alert status (`active`, `investigating`, `resolved`) | Public |
+| `GET` | `/api/v1/dashboard/overview` | Aggregated SOC KPIs, risk distributions, trends & recent alerts | Public |
+| `GET` | `/api/v1/activity/{user}` | IAM identity activity history, risk trend & actions | Public |
+| `GET` | `/api/v1/models/performance` | Real V3 model evaluation metrics & confusion matrices | Public |
 
 ---
 
 ## Verification & Testing Results
 
 ### Automated Backend Tests
-All 14 unit tests in `backend/tests/` passed:
+All 37 unit and integration tests in `backend/tests/` passed:
 ```powershell
 python -m pytest backend/tests -v
 ```
 Output:
 ```
-backend/tests/test_alerts.py::test_list_alerts PASSED                    [  7%]
-backend/tests/test_alerts.py::test_get_alert_by_id PASSED                [ 14%]
-backend/tests/test_alerts.py::test_update_alert_status PASSED            [ 21%]
-backend/tests/test_alerts.py::test_dashboard_overview PASSED             [ 28%]
-backend/tests/test_alerts.py::test_user_activity PASSED                  [ 35%]
-backend/tests/test_alerts.py::test_model_performance PASSED              [ 42%]
-backend/tests/test_analysis.py::test_get_analysis_for_valid_event PASSED [ 50%]
-backend/tests/test_analysis.py::test_get_analysis_not_found PASSED       [ 57%]
-backend/tests/test_events.py::test_list_events PASSED                    [ 64%]
-backend/tests/test_events.py::test_list_events_pagination_and_filter PASSED [ 71%]
-backend/tests/test_events.py::test_get_event_by_id PASSED                [ 78%]
-backend/tests/test_events.py::test_get_event_not_found PASSED            [ 85%]
-backend/tests/test_events.py::test_get_event_timeline PASSED             [ 92%]
+backend/tests/test_alerts.py::test_list_alerts PASSED                    [  2%]
+backend/tests/test_alerts.py::test_get_alert_by_id PASSED                [  5%]
+backend/tests/test_alerts.py::test_update_alert_status PASSED            [  8%]
+backend/tests/test_alerts.py::test_dashboard_overview PASSED             [ 10%]
+backend/tests/test_alerts.py::test_user_activity PASSED                  [ 13%]
+backend/tests/test_alerts.py::test_model_performance PASSED              [ 16%]
+backend/tests/test_analysis.py::test_get_analysis_for_valid_event PASSED [ 18%]
+backend/tests/test_analysis.py::test_get_analysis_not_found PASSED       [ 21%]
+backend/tests/test_auth.py::test_password_hashing_argon2 PASSED           [ 24%]
+backend/tests/test_auth.py::test_password_strength_validation PASSED     [ 27%]
+backend/tests/test_auth.py::test_username_format_validation PASSED       [ 29%]
+backend/tests/test_auth.py::test_jwt_generation_and_decoding PASSED       [ 32%]
+backend/tests/test_auth.py::test_jwt_expiration PASSED                   [ 35%]
+backend/tests/test_auth.py::test_jwt_tampered_signature PASSED           [ 37%]
+backend/tests/test_auth.py::test_successful_local_registration PASSED    [ 40%]
+backend/tests/test_auth.py::test_registration_duplicate_username PASSED  [ 43%]
+backend/tests/test_auth.py::test_registration_duplicate_email PASSED     [ 45%]
+backend/tests/test_auth.py::test_registration_weak_password PASSED        [ 48%]
+backend/tests/test_auth.py::test_successful_local_login_with_username_and_email PASSED [ 51%]
+backend/tests/test_auth.py::test_login_invalid_password PASSED            [ 54%]
+backend/tests/test_auth.py::test_login_nonexistent_account_enumeration_protection PASSED [ 56%]
+backend/tests/test_auth.py::test_protected_endpoint_without_jwt PASSED    [ 59%]
+backend/tests/test_auth.py::test_protected_endpoint_with_invalid_jwt PASSED [ 62%]
+backend/tests/test_auth.py::test_protected_endpoint_with_expired_jwt PASSED [ 64%]
+backend/tests/test_auth.py::test_protected_endpoint_with_valid_jwt PASSED [ 67%]
+backend/tests/test_auth.py::test_google_oauth_url_generation PASSED      [ 70%]
+backend/tests/test_auth.py::test_google_auth_new_user_provisioning PASSED [ 72%]
+backend/tests/test_auth.py::test_google_auth_existing_user_login PASSED   [ 75%]
+backend/tests/test_auth.py::test_google_auth_token_verification_failure PASSED [ 78%]
+backend/tests/test_auth.py::test_google_auth_prevents_unsafe_local_account_silent_merge PASSED [ 81%]
+backend/tests/test_auth.py::test_root_auth_endpoints_alias PASSED        [ 83%]
+backend/tests/test_events.py::test_list_events PASSED                    [ 86%]
+backend/tests/test_events.py::test_list_events_pagination_and_filter PASSED [ 89%]
+backend/tests/test_events.py::test_get_event_by_id PASSED                [ 91%]
+backend/tests/test_events.py::test_get_event_not_found PASSED            [ 94%]
+backend/tests/test_events.py::test_get_event_timeline PASSED             [ 97%]
 backend/tests/test_health.py::test_health_check PASSED                   [100%]
-============================== 14 passed in 4.80s ==============================
+============================== 37 passed in 2.40s ==============================
 ```
+
 
 ### Full Repository Regression Verification
 Running the entire test suite across both backend and all original project test suites:

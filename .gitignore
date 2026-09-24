@@ -18,5 +18,6 @@ __pycache__/
 # Artifacts & Temporary Files
 scratch/
 *.log
+*.db
 
 data/raw_experiments/

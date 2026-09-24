@@ -250,3 +250,63 @@ class HealthResponse(BaseModel):
     version: Optional[str] = None
     model_version: Optional[str] = None
     analyzer_loaded: Optional[bool] = None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Authentication & User Management Schemas
+# ─────────────────────────────────────────────────────────────────────────────
+
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    ANALYST = "analyst"
+    VIEWER = "viewer"
+
+
+class UserRegisterRequest(BaseModel):
+    username: str = Field(..., min_length=3, max_length=30, description="Unique alphanumeric username")
+    email: str = Field(..., description="Valid unique email address")
+    password: str = Field(..., min_length=8, max_length=128, description="Strong password meeting complexity rules")
+    fullName: Optional[str] = Field(None, max_length=255, description="User full name")
+
+
+class UserLoginRequest(BaseModel):
+    username: Optional[str] = Field(None, description="Username (optional if email/identifier provided)")
+    email: Optional[str] = Field(None, description="Email (optional if username/identifier provided)")
+    identifier: Optional[str] = Field(None, description="Username or email identifier")
+    password: str = Field(..., min_length=1, description="Account password")
+
+
+class GoogleAuthRequest(BaseModel):
+    credential: Optional[str] = Field(None, description="Google ID Token issued by Google Identity Services")
+    id_token: Optional[str] = Field(None, description="Alias for Google ID Token")
+    code: Optional[str] = Field(None, description="Google OAuth authorization code for server-side exchange")
+
+
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    role: str
+    authProvider: str
+    fullName: Optional[str] = None
+    avatarUrl: Optional[str] = None
+    isActive: bool
+    createdAt: str
+    updatedAt: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    user: UserResponse
+
+
+class TokenPayload(BaseModel):
+    sub: str
+    username: str
+    email: str
+    role: str
+    iat: int
+    exp: int
+

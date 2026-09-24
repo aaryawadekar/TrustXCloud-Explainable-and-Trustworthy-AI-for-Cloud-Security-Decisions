@@ -52,5 +52,18 @@ class Settings:
     THRESHOLD_SUSPICIOUS: float = float(os.getenv("THRESHOLD_SUSPICIOUS", "0.25"))
     ALERT_RISK_THRESHOLD: float = float(os.getenv("ALERT_RISK_THRESHOLD", "0.50"))
 
+    # Database Settings
+    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(DATA_DIR, 'trustxcloud.db')}")
+
+    # Authentication & JWT Configuration
+    JWT_SECRET: str = os.getenv("JWT_SECRET", "trustxcloud-secure-default-jwt-secret-key-replace-in-production")
+    JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
+    JWT_EXPIRATION_MINUTES: int = int(os.getenv("JWT_EXPIRATION_MINUTES", "60"))
+
+    # Google OAuth 2.0 / OpenID Connect Configuration
+    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
+    GOOGLE_CLIENT_SECRET: str = os.getenv("GOOGLE_CLIENT_SECRET", "")
+    GOOGLE_REDIRECT_URI: str = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/v1/auth/google/callback")
+
 
 settings = Settings()
