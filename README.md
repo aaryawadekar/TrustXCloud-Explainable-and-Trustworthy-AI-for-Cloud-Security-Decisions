@@ -162,6 +162,22 @@ result = analyzer.analyze_event({
 analyzer.print_decision_report(result)
 ```
 
+### 5. Run the FastAPI Backend Bridge
+Exposes REST endpoints (`/api/v1/analyze`, `/api/v1/metrics`, `/api/v1/scenarios`) bridging the ML engine to web clients:
+```bash
+uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 6. Run the Next.js Explainable SOC Panel UI
+Enterprise hardware panel dashboard built with Next.js 14, TypeScript, and high-contrast hardware SOC themes:
+```bash
+cd frontend
+npm install
+npm run dev    # Development mode on http://localhost:3000
+# or for production:
+npm run build && npm start
+```
+
 ---
 
 ## 8. LLM Narration Layer & Preserved Fallback Modes
@@ -225,3 +241,205 @@ The system uses Google's current Gemini API with **Gemini 3.6 Flash** via the of
 - SHAP and LIME show weak agreement (27% top-1, R² 0.419 for LIME), indicating the two explainers frequently diverge on the same prediction; results should be read as complementary, not confirmatory.
 - The LLM faithfulness audit is prompt-grounded (the model is shown the ranked SHAP features and asked to cite the top one), so the 100% alignment reflects grounding compliance rather than independent verification.
 - Identity-holdout performance (F1 0.83) is meaningfully lower than in-distribution splits, indicating limited generalization to previously unseen principals.
+
+---
+
+## 10. Authentication & Security Architecture (JWT + Google OAuth 2.0 / OIDC)
+
+TrustXCloud includes a production-grade authentication and authorization subsystem supporting both **Local Username/Email + Password Authentication** and **Continue with Google (OAuth 2.0 / OpenID Connect)**. APIs are secured using stateless **JSON Web Tokens (JWT)**.
+
+### Architecture Overview
+
+```mermaid
+flowchart LR
+    subgraph Clients
+        Web[SOC Panel Web UI]
+    end
+
+    subgraph Authentication Engine
+        Local[Local Credentials<br/>Argon2id Hash]
+        Google[Google OIDC / GIS<br/>Public Cert Verification]
+        JWTGen[JWT Issuer<br/>HS256 Minimal Claims]
+    end
+
+    subgraph Protected APIs
+        UserEndpoint[GET /auth/me]
+        AlertMutation[PATCH /alerts/:id]
+        SOC[SOC Dashboard & Telemetry]
+    end
+
+    Web -->|POST /auth/register| Local
+    Web -->|POST /auth/login| Local
+    Web -->|Continue with Google| Google
+    Local --> JWTGen
+    Google --> JWTGen
+    JWTGen -->|Bearer JWT| Web
+    Web -->|Authorization: Bearer JWT| UserEndpoint
+    Web -->|Authorization: Bearer JWT| AlertMutation
+    Web -->|Authorization: Bearer JWT| SOC
+```
+
+### Environment Configuration
+
+The following environment variables configure the authentication subsystem:
+
+| Variable | Description | Default | Required in Production |
+| :--- | :--- | :--- | :---: |
+| `DATABASE_URL` | SQLAlchemy connection URI (PostgreSQL, MySQL, SQLite) | `sqlite:///./data/trustxcloud.db` | Yes (RDS/Postgres) |
+| `JWT_SECRET` | 256-bit cryptographic signing secret for HMAC-SHA256 | Internal dev secret | **Yes** |
+| `JWT_ALGORITHM` | Token signing algorithm | `HS256` | No |
+| `JWT_EXPIRATION_MINUTES` | Token lifetime before expiration | `60` (1 hour) | No |
+| `GOOGLE_CLIENT_ID` | OAuth 2.0 Client ID from Google Cloud Console | `""` | Yes (for Google Auth) |
+| `GOOGLE_CLIENT_SECRET` | OAuth 2.0 Client Secret from Google Cloud Console | `""` | Yes (for Code Exchange) |
+| `GOOGLE_REDIRECT_URI` | Authorized redirect URI for Google OAuth callback | `http://localhost:8000/api/v1/auth/google/callback` | Yes |
+
+### Google Cloud OAuth 2.0 Setup Guide
+
+1. Navigate to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Select or create your GCP project.
+3. Under **APIs & Services** > **OAuth consent screen**:
+   - Choose **External** user type.
+   - Configure App Name (`TrustXCloud`), user support email, and developer contact.
+   - Add scopes: `openid`, `.../auth/userinfo.email`, `.../auth/userinfo.profile`.
+4. Under **APIs & Services** > **Credentials**:
+   - Click **Create Credentials** > **OAuth client ID**.
+   - Select application type **Web application**.
+   - Under **Authorized JavaScript origins**, add your frontend URLs:
+     `http://localhost:3000` (Next.js dev) and your production frontend domain.
+   - Under **Authorized redirect URIs**, add:
+     `http://localhost:8000/api/v1/auth/google/callback` (or your production API URL).
+5. Copy the generated **Client ID** and **Client Secret** into your `.env` file:
+   ```env
+   GOOGLE_CLIENT_ID=xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx
+   GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/auth/google/callback
+   ```
+
+### Authentication Endpoints Reference
+
+All authentication endpoints are dual-mounted under `/api/v1/auth` and `/auth` for maximum client compatibility.
+
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `POST` | `/api/v1/auth/register` | Register a new local user account | No |
+| `POST` | `/api/v1/auth/login` | Authenticate with username or email + password | No |
+| `GET` | `/api/v1/auth/google` | Generate OAuth 2.0 authorization URL (`?redirect=true` for 307) | No |
+| `GET` | `/api/v1/auth/google/callback` | Callback endpoint exchanging OAuth code for JWT | No |
+| `POST` | `/api/v1/auth/google` | Direct ID token exchange for SPA / "Continue with Google" button | No |
+| `GET` | `/api/v1/auth/me` | Fetch authenticated user profile | **Yes (Bearer JWT)** |
+
+### API Request & Response Examples
+
+#### 1. Local Registration (`POST /api/v1/auth/register`)
+
+**Request**:
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "sarah_soc",
+    "email": "sarah@trustxcloud.internal",
+    "password": "Compl1ant!Password2026",
+    "fullName": "Sarah Connor"
+  }'
+```
+
+**Response (`201 Created`)**:
+```json
+{
+  "id": "c1f7b8e2-9b24-4f01-9a72-73a8ef5b4e01",
+  "username": "sarah_soc",
+  "email": "sarah@trustxcloud.internal",
+  "role": "analyst",
+  "authProvider": "local",
+  "fullName": "Sarah Connor",
+  "avatarUrl": null,
+  "isActive": true,
+  "createdAt": "2026-09-24T15:45:00.123456+00:00",
+  "updatedAt": "2026-09-24T15:45:00.123456+00:00"
+}
+```
+
+#### 2. Local Login (`POST /api/v1/auth/login`)
+
+**Request**:
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "sarah_soc",
+    "password": "Compl1ant!Password2026"
+  }'
+```
+
+**Response (`200 OK`)**:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "user": {
+    "id": "c1f7b8e2-9b24-4f01-9a72-73a8ef5b4e01",
+    "username": "sarah_soc",
+    "email": "sarah@trustxcloud.internal",
+    "role": "analyst",
+    "authProvider": "local",
+    "fullName": "Sarah Connor",
+    "avatarUrl": null,
+    "isActive": true,
+    "createdAt": "2026-09-24T15:45:00.123456+00:00",
+    "updatedAt": "2026-09-24T15:45:00.123456+00:00"
+  }
+}
+```
+
+#### 3. Continue with Google (`POST /api/v1/auth/google`)
+
+Used by Next.js / React frontends utilizing Google Identity Services (GIS):
+
+**Request**:
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/google \
+  -H "Content-Type: application/json" \
+  -d '{
+    "credential": "<Google_ID_Token_From_GIS>"
+  }'
+```
+
+**Response (`200 OK`)**:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "user": {
+    "id": "e4a3b1c2-5555-4e33-8bbb-999999999999",
+    "username": "sarah_google",
+    "email": "sarah.connor@gmail.com",
+    "role": "analyst",
+    "authProvider": "google",
+    "fullName": "Sarah Connor",
+    "avatarUrl": "https://lh3.googleusercontent.com/a/...",
+    "isActive": true,
+    "createdAt": "2026-09-24T15:46:10.000000+00:00",
+    "updatedAt": "2026-09-24T15:46:10.000000+00:00"
+  }
+}
+```
+
+#### 4. Accessing Protected Endpoints (`GET /api/v1/auth/me`)
+
+**Request**:
+```bash
+curl -X GET http://localhost:8000/api/v1/auth/me \
+  -H "Authorization: Bearer <your_access_token>"
+```
+
+### Security & Privacy Controls
+
+1. **Argon2id Password Storage**: Passwords are never stored in plaintext. They are hashed using Argon2id with 64 MB memory cost and 2 iterations, providing robust protection against GPU and ASIC cracking attacks.
+2. **User Enumeration Prevention**: Failed logins return an identical generic error message (`"Invalid username/email or password."`) whether the username exists or not, with constant-time password verification.
+3. **Cryptographic Google Token Verification**: Client-supplied identity assertions are never trusted blindly. Google ID tokens are validated cryptographically against Google's public JSON Web Keys (JWKS), verifying signature, audience, issuer (`accounts.google.com`), and expiration.
+4. **Account Takeover / Silent Merge Prevention**: If an attacker attempts to log in with Google using an email that already exists as a local password-protected account, the system rejects the attempt (`409 Conflict`), preventing unauthorized account takeover.
+5. **Stateless JWTs**: Tokens contain only non-sensitive claims (`sub`, `username`, `email`, `role`, `iat`, `exp`). No passwords, password hashes, or secrets are ever embedded in tokens.
+
