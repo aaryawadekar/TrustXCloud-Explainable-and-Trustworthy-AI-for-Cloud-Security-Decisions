@@ -53,7 +53,10 @@ class Settings:
     ALERT_RISK_THRESHOLD: float = float(os.getenv("ALERT_RISK_THRESHOLD", "0.50"))
 
     # Database Settings
-    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(DATA_DIR, 'trustxcloud.db')}")
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        "sqlite:///" + os.path.join(DATA_DIR, "trustxcloud.db").replace("\\", "/")
+    )
 
     # Authentication & JWT Configuration
     JWT_SECRET: str = os.getenv("JWT_SECRET", "trustxcloud-secure-default-jwt-secret-key-replace-in-production")
