@@ -187,3 +187,22 @@ def require_role(allowed_roles: List[str]):
         return current_user
     return role_checker
 
+
+def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer),
+    user_repo: UserRepository = Depends(get_user_repo),
+) -> Optional[User]:
+    """
+    Optional user retrieval for non-mandatory authenticated endpoints (e.g. audit logging on logout).
+    """
+    if not credentials or not credentials.credentials:
+        return None
+    try:
+        payload = decode_access_token(credentials.credentials)
+        user_id = payload.get("sub")
+        if user_id:
+            return user_repo.get_by_id(user_id)
+    except Exception:
+        return None
+    return None
+

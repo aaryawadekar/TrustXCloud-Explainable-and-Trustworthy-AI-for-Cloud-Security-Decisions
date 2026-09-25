@@ -282,6 +282,19 @@ class GoogleAuthRequest(BaseModel):
     code: Optional[str] = Field(None, description="Google OAuth authorization code for server-side exchange")
 
 
+class GoogleDemoRequest(BaseModel):
+    email: Optional[str] = Field(None, description="Optional custom Google email for demo account")
+    fullName: Optional[str] = Field(None, description="Optional custom full name for demo account")
+    avatarUrl: Optional[str] = Field(None, description="Optional custom avatar URL")
+
+
+class GoogleConfigResponse(BaseModel):
+    configured: bool
+    clientId: Optional[str] = None
+    redirectUri: str
+    demoAvailable: bool = True
+
+
 class UserResponse(BaseModel):
     id: str
     username: str

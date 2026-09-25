@@ -4,6 +4,7 @@ Google OAuth2 identity verification, account provisioning, and JWT issuance.
 """
 
 import re
+import secrets
 import logging
 from typing import Optional, Dict, Any
 from fastapi import HTTPException, status
@@ -319,3 +320,67 @@ class AuthService:
             candidate = f"{base_username}_{suffix}"
             suffix += 1
         return candidate
+
+    def login_dev_google_user(
+        self,
+        email: Optional[str] = None,
+        name: Optional[str] = None,
+        avatar_url: Optional[str] = None,
+    ) -> TokenResponse:
+        """
+        Provisions or logs in a user using simulated Google OAuth identity.
+        Used for development, testing, and evaluation when live Google Cloud Console credentials
+        are not configured.
+        """
+        target_email = (email or "alex.soc@trustxcloud.io").strip().lower()
+        target_name = name or "Alex Mercer (SecOps Lead)"
+        target_avatar = (
+            avatar_url
+            or "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+        )
+
+        user = self.user_repo.get_by_email(target_email)
+        if user:
+            if not user.is_active:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="User account is deactivated. Please contact an administrator.",
+                )
+            if user.auth_provider != "google":
+                # Guard against local account collision in demo mode
+                target_email = f"google.{target_email}"
+                user = self.user_repo.get_by_email(target_email)
+
+        if not user:
+            base_username = self._derive_username_from_identity(target_name, target_email)
+            unique_username = self._ensure_unique_username(base_username)
+            google_id = f"google-dev-{secrets.token_hex(6)}"
+
+            user = self.user_repo.create(
+                username=unique_username,
+                email=target_email,
+                hashed_password=None,
+                google_id=google_id,
+                auth_provider="google",
+                role="analyst",
+                full_name=target_name,
+                avatar_url=target_avatar,
+                is_active=True,
+            )
+            logger.info(f"Provisioned demo Google user: {user.username} ({user.email})")
+
+        token_data = {
+            "sub": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+        }
+        access_token = create_access_token(token_data)
+
+        return TokenResponse(
+            access_token=access_token,
+            token_type="bearer",
+            expires_in=settings.JWT_EXPIRATION_MINUTES * 60,
+            user=self.user_to_response(user),
+        )
+

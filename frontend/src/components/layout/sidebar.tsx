@@ -10,8 +10,10 @@ import {
   UserCheck,
   Cpu,
   Terminal,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/providers/auth-provider';
 
 interface NavItem {
   label: string;
@@ -54,6 +56,7 @@ export function Sidebar({
   onClose?: () => void;
 }) {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   return (
     <aside
@@ -155,17 +158,46 @@ export function Sidebar({
         </div>
       </div>
 
-      {/* Footer Info */}
-      <div className="border-t border-[var(--panel-border)] bg-[var(--panel-bg)] px-3 py-2.5">
-        <div className="flex items-center gap-2 text-xs font-mono">
-          <div className="h-6 w-6 rounded-none bg-[var(--panel-header)] border border-[var(--panel-border)] flex items-center justify-center text-[10px] font-bold text-[var(--accent-text)]">
-            TX
-          </div>
+      {/* Footer Info & Sign Out */}
+      <div className="border-t border-[var(--panel-border)] bg-[var(--panel-bg)] p-3 space-y-2.5 font-mono">
+        <div className="flex items-center gap-2.5">
+          {user?.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt={user.fullName || user.username}
+              className="h-7 w-7 rounded-none border border-[var(--panel-border)] object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="h-7 w-7 rounded-none bg-[var(--panel-header)] border border-[var(--panel-border)] flex items-center justify-center text-[10px] font-bold text-[var(--accent-text)] flex-shrink-0">
+              {(user?.fullName?.[0] || user?.username?.[0] || 'A').toUpperCase()}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
-            <p className="text-slate-200 truncate leading-none text-[11px]">analyst@trustx</p>
-            <p className="text-[10px] text-slate-500 truncate leading-none mt-1">AWS-RO-ROLE</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-slate-200 truncate leading-none text-xs font-semibold">
+                {user?.fullName || user?.username || 'Security Analyst'}
+              </p>
+              {user?.authProvider === 'google' && (
+                <span className="rounded-none bg-blue-950/80 border border-blue-800 text-blue-400 text-[8px] px-1 font-bold">
+                  GOOGLE
+                </span>
+              )}
+            </div>
+            <p className="text-[10px] text-slate-500 truncate leading-none mt-1">
+              {user?.email || 'analyst@trustxcloud.internal'}
+            </p>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={logout}
+          className="w-full flex items-center justify-center gap-2 py-1.5 px-2 bg-[var(--panel-header)] border border-[var(--panel-border)] text-slate-400 hover:text-red-400 hover:border-red-800/80 hover:bg-red-950/20 text-xs font-mono transition-all group"
+          title="Sign out of TrustXCloud session"
+        >
+          <LogOut className="h-3.5 w-3.5 group-hover:text-red-400 transition-colors" />
+          <span>Sign Out</span>
+        </button>
       </div>
     </aside>
   );

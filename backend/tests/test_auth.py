@@ -479,3 +479,42 @@ def test_root_auth_endpoints_alias(client):
     res3 = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert res3.status_code == 200
     assert res3.json()["username"] == "karen_root"
+
+
+def test_google_config_endpoint(client):
+    """Verifies GET /api/v1/auth/google/config returns configuration status."""
+    res = client.get("/api/v1/auth/google/config")
+    assert res.status_code == 200
+    data = res.json()
+    assert "configured" in data
+    assert "redirectUri" in data
+    assert "demoAvailable" in data
+
+
+def test_google_demo_login(client):
+    """Verifies POST /api/v1/auth/google/demo provisions demo Google user."""
+    res = client.post("/api/v1/auth/google/demo", json={
+        "email": "demo.analyst@example.com",
+        "fullName": "Demo Analyst",
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert "access_token" in data
+    assert data["user"]["email"] == "demo.analyst@example.com"
+    assert data["user"]["authProvider"] == "google"
+    assert data["user"]["role"] == "analyst"
+
+
+def test_logout_endpoint(client):
+    """Verifies POST /api/v1/auth/logout succeeds."""
+    res = client.post("/api/v1/auth/logout")
+    assert res.status_code == 200
+    assert res.json()["status"] == "success"
+
+
+def test_google_login_redirect(client):
+    """Verifies GET /api/v1/auth/google/login performs redirect."""
+    res = client.get("/api/v1/auth/google/login?redirect=true", follow_redirects=False)
+    assert res.status_code in [307, 302]
+    assert "callback" in res.headers["location"] or "accounts.google.com" in res.headers["location"]
+

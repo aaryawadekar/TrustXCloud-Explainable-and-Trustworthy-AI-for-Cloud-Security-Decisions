@@ -163,3 +163,24 @@ export interface ModelPerformanceData {
     featuresCount: number;
   };
 }
+
+export interface UserResponse {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  authProvider: string;
+  fullName?: string;
+  avatarUrl?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  user: UserResponse;
+}
+

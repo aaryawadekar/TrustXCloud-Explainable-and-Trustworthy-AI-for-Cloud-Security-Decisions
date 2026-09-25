@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Menu, Bell, Activity, Cpu, Palette } from 'lucide-react';
+import { Menu, Bell, Activity, Cpu, Palette, LogOut } from 'lucide-react';
+import { useAuth } from '@/providers/auth-provider';
 
 const THEMES = [
   { id: 'aws-amber', label: 'AWS AMBER', color: '#f59e0b' },
@@ -10,6 +11,7 @@ const THEMES = [
 ];
 
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
+  const { user, logout } = useAuth();
   const [time, setTime] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('aws-amber');
 
@@ -108,6 +110,34 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
             </span>
           </button>
         </div>
+
+        {/* User Profile & Sign Out Button */}
+        {user && (
+          <div className="flex items-center gap-1.5 bg-[var(--panel-header)] border border-[var(--panel-border)] pl-2 pr-1 py-1">
+            {user.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt={user.fullName || user.username}
+                className="h-4 w-4 rounded-none object-cover border border-slate-700"
+              />
+            ) : (
+              <span className="h-4 w-4 bg-[var(--accent-subtle)] text-[var(--accent-text)] text-[9px] font-bold flex items-center justify-center">
+                {(user.fullName?.[0] || user.username?.[0] || 'A').toUpperCase()}
+              </span>
+            )}
+            <span className="text-slate-300 text-[11px] hidden md:inline truncate max-w-[110px]">
+              {user.fullName || user.username}
+            </span>
+            <button
+              onClick={logout}
+              className="flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono text-slate-400 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+              title="Logout from session"
+            >
+              <LogOut className="h-3 w-3" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );

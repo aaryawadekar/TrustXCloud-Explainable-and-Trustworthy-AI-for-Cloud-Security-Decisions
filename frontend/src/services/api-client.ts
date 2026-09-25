@@ -7,6 +7,19 @@ class ApiClient {
     this.baseUrl = APP_CONFIG.apiBaseUrl;
   }
 
+  private getAuthHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+    return headers;
+  }
+
   async get<T>(endpoint: string, params?: Record<string, string | number | undefined>): Promise<T> {
     const url = new URL(endpoint.startsWith('http') ? endpoint : `${this.baseUrl || ''}${endpoint}`, 'http://localhost');
     if (params) {
@@ -21,11 +34,14 @@ class ApiClient {
     const fetchUrl = this.baseUrl ? `${this.baseUrl}${pathAndQuery}` : pathAndQuery;
 
     const res = await fetch(fetchUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getAuthHeaders(),
       cache: 'no-store',
     });
+
+    if (res.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+      window.location.href = '/login';
+    }
 
     if (!res.ok) {
       throw new Error(`API Error ${res.status}: ${res.statusText} on ${endpoint}`);
@@ -38,11 +54,14 @@ class ApiClient {
     const fetchUrl = this.baseUrl ? `${this.baseUrl}${endpoint}` : endpoint;
     const res = await fetch(fetchUrl, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
+
+    if (res.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+      window.location.href = '/login';
+    }
 
     if (!res.ok) {
       throw new Error(`API Error ${res.status}: ${res.statusText}`);
