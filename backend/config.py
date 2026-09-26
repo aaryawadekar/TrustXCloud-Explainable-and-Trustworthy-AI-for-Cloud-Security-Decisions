@@ -37,6 +37,10 @@ class Settings:
         "RAW_EVENTS_PATH",
         os.path.join(DATA_DIR, "processed", "sample_raw_events.json")
     )
+    V3_DATASET_PATH: str = os.getenv(
+        "V3_DATASET_PATH",
+        os.path.join(DATA_DIR, "processed", "final_v3_dataset.csv")
+    )
     FINAL_METRICS_PATH: str = os.path.join(MODELS_DIR, "final_metrics_v3.json")
     XAI_METRICS_PATH: str = os.path.join(MODELS_DIR, "xai_metrics_v3.json")
     TRAINING_CONFIG_PATH: str = os.path.join(MODELS_DIR, "training_config_v3.json")

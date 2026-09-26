@@ -117,7 +117,7 @@ class ModelsService:
             modelName="TrustXCloud Dual Ensemble V3",
             algorithm="XGBoost V3 + PyTorch TabNet V3 Ensemble",
             explainabilityMethod="TreeSHAP (Exact) + LIME Tabular (Local Surrogate) + Gemini Audit",
-            trainingDataset="AWS CloudTrail Synthetic & Real Telemetry (V3 Standardized)",
+            trainingDataset="V3 Standardized CloudTrail Dataset (14,004 total events: 2,800 Holdout Test)",
             lastTrained="2026-04-28T00:00:00Z",
             featuresCount=features_count,
         )

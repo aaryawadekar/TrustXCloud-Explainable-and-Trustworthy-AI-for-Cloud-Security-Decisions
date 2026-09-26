@@ -41,6 +41,7 @@ from backend.services.analysis_service import AnalysisService
 from backend.services.dashboard_service import DashboardService
 from backend.services.activity_service import ActivityService
 from backend.services.models_service import ModelsService
+from backend.services.dataset_stats_service import DatasetStatsService
 from backend.dependencies import (
     get_events_service,
     get_analysis_service,
@@ -78,10 +79,15 @@ async def lifespan(app: FastAPI):
     dynamodb_repo = DynamoDBRepository()
     app.state.dynamodb_repo = dynamodb_repo
 
-    # 2. Initialize Events & Supporting Services
+    # 2a. Initialize Dataset Stats Service (reads final_v3_dataset.csv once)
+    dataset_stats_service = DatasetStatsService()
+    app.state.dataset_stats_service = dataset_stats_service
+
+    # 2b. Initialize Events & Supporting Services
     events_service = EventsService()
     alerts_service = AlertsService(events_service)
-    dashboard_service = DashboardService(events_service, alerts_service)
+    # Pass dataset_stats_service so DashboardService uses real V3 CSV totals
+    dashboard_service = DashboardService(events_service, alerts_service, dataset_stats_service)
     activity_service = ActivityService(events_service)
     models_service = ModelsService()
 
@@ -358,6 +364,30 @@ def get_dashboard_overview(
 ):
     """Computes and returns aggregated KPIs, risk distributions, trends, and recent alerts."""
     return dashboard_svc.get_overview()
+
+
+@app.get(
+    f"{settings.API_V1_STR}/dashboard/dataset-stats",
+    tags=["Dashboard"],
+    summary="Get V3 ML Dataset Statistics",
+)
+def get_dataset_stats(request: Request):
+    """
+    Returns ML dataset-level statistics derived from final_v3_dataset.csv.
+
+    IMPORTANT — Concept separation:
+      - `benign_count` / `threat_count` are ML prediction labels (is_threat=0 / is_threat=1).
+        They represent the model's training/evaluation targets, NOT the live risk classification.
+      - The dashboard risk layer (normal / suspicious / high_risk / critical) is computed
+        separately via score-threshold logic in EventsService and DashboardService.
+
+    Use this endpoint to display the full V3 dataset size and ML label distribution
+    on the Model Performance or supplementary dataset info pages.
+    """
+    stats_svc: DatasetStatsService = getattr(request.app.state, "dataset_stats_service", None)
+    if not stats_svc:
+        raise HTTPException(status_code=503, detail="Dataset stats service is not available.")
+    return stats_svc.get_summary()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

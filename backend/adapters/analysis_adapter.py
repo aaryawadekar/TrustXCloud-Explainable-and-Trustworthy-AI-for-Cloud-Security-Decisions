@@ -16,6 +16,8 @@ from backend.schemas import (
     Explanation,
     ExplanationFactor,
     ModelMetadata,
+    LimeRule,
+    FaithfulnessAudit,
 )
 
 # Deterministic categorization for the 14 V3 model features
@@ -148,6 +150,35 @@ def to_explanation_factors(ml_result: Dict[str, Any]) -> List[ExplanationFactor]
     return factors
 
 
+def to_lime_rules(ml_result: Dict[str, Any]) -> List[LimeRule]:
+    """Transforms LIME surrogate explanation from the ML result into LimeRule objects."""
+    rules = []
+    for item in ml_result.get("lime_cross_check", ml_result.get("lime_explanation", [])):
+        rules.append(LimeRule(
+            rule=str(item.get("rule", "")),
+            weight=float(item.get("weight", 0.0)),
+            direction=str(item.get("direction", "Unknown")),
+        ))
+    return rules
+
+
+def to_faithfulness_audit(ml_result: Dict[str, Any]) -> Optional[FaithfulnessAudit]:
+    """Extracts the LLM faithfulness audit from the ML result."""
+    faith = ml_result.get("llm_faithfulness_result") or ml_result.get("llm_narration", {}).get("llm_faithfulness_audit")
+    if not faith:
+        return None
+    audit_details = faith.get("audit_details", {})
+    return FaithfulnessAudit(
+        isFaithful=bool(faith.get("is_faithful", faith.get("is_faithful_to_shap", False))),
+        modelTopShapFeature=str(faith.get("model_top_shap_feature", "")),
+        llmCitedFeature=str(faith.get("llm_cited_feature", "")),
+        exactMatch=bool(audit_details.get("exact_feature_match", False)),
+        semanticMatch=bool(audit_details.get("semantic_keyword_alignment", False)),
+        top3Overlap=bool(audit_details.get("top_3_shap_overlap", False)),
+        provider=str(audit_details.get("provider", "local_deterministic_fallback")),
+    )
+
+
 def to_security_analysis(
     event_id: str,
     ml_result: Dict[str, Any],
@@ -156,15 +187,41 @@ def to_security_analysis(
     """
     Primary adapter function converting raw ML result dictionary into
     frontend-compatible SecurityAnalysis Pydantic model.
+
+    Concept separation preserved throughout:
+      - mlPrediction: "BENIGN" | "THREAT" — the discrete ML classifier output
+      - threatProbability: [0.0, 1.0] — raw ensemble avg_prob (XGB + TabNet)
+      - riskScore: [0.0, 1.0] — identical to threatProbability in this pipeline
+      - classification: normal / suspicious / high_risk / critical — risk-tier layer
+      - confidence: model confidence IN the decision (prob of class, not of threat)
     """
     risk_score = derive_risk_score(ml_result)
     decision = ml_result.get("decision", "BENIGN")
     confidence = float(ml_result.get("confidence", 0.50))
     classification = map_classification(decision, risk_score)
     factors = to_explanation_factors(ml_result)
+    lime_rules = to_lime_rules(ml_result)
+    faithfulness = to_faithfulness_audit(ml_result)
 
-    # Narrative / Summary
-    summary = ml_result.get("llm_narrative")
+    # Raw per-model probabilities
+    xgb_p = ml_result.get("xgboost_probability") or ml_result.get("model_comparison", {}).get("xgboost_threat_prob")
+    tab_p = ml_result.get("tabnet_probability") or ml_result.get("model_comparison", {}).get("tabnet_threat_prob")
+
+    # threat_probability = raw ensemble avg (always the avg_prob from the pipeline)
+    threat_prob_raw = ml_result.get("confidence")  # confidence holds avg_prob when THREAT
+    if decision == "THREAT":
+        # confidence = avg_prob (threat prob)
+        threat_prob = confidence
+    else:
+        # confidence = 1 - avg_prob for BENIGN; back-calculate avg_prob
+        threat_prob = 1.0 - confidence
+
+    # Prefer explicitly stored threat_probability if available
+    if xgb_p is not None and tab_p is not None:
+        threat_prob = round((float(xgb_p) + float(tab_p)) / 2.0, 4)
+
+    # Narrative / Summary — from LLM narration
+    summary = ml_result.get("llm_narrative") or ml_result.get("llm_narration", {}).get("plain_english_explanation")
     if not summary:
         event_name = ml_result.get("event_summary", {}).get("event_name", "CloudTrail API call")
         summary = f"Automated analysis for {event_id}. Event '{event_name}' classified as {decision} with confidence {confidence:.2f}."
@@ -201,9 +258,19 @@ def to_security_analysis(
 
     return SecurityAnalysis(
         eventId=event_id,
+        # ML signals (clearly separated)
+        mlPrediction=decision if decision != "ERROR" else "ERROR",
+        threatProbability=round(threat_prob, 4),
+        xgboostProbability=round(float(xgb_p), 4) if xgb_p is not None else None,
+        tabnetProbability=round(float(tab_p), 4) if tab_p is not None else None,
+        modelAgreement=bool(ml_result.get("model_agreement", True)),
+        confidenceGap=round(float(ml_result.get("confidence_gap", 0.0)), 4),
         riskScore=risk_score,
         classification=classification,
         confidence=confidence,
         explanation=explanation,
+        limeExplanation=lime_rules,
+        remediationSuggestion=ml_result.get("remediation_suggestion") or ml_result.get("llm_narration", {}).get("suggested_action"),
+        faithfulnessAudit=faithfulness,
         modelMetadata=model_meta,
     )

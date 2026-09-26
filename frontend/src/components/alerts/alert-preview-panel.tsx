@@ -132,20 +132,52 @@ export function AlertPreviewPanel({
         {/* Quick XAI Preview */}
         {analysis && (
           <div className="space-y-2.5 border-t border-slate-800/50 pt-3">
+            {/* Prediction Summary Row */}
+            <div className="grid grid-cols-3 gap-1.5">
+              <div className="rounded border border-slate-800 bg-slate-950/60 p-2 text-center">
+                <span className="text-[9px] uppercase text-slate-600 block mb-0.5">ML Prediction</span>
+                <span className={cn(
+                  'text-[11px] font-black',
+                  analysis.mlPrediction === 'THREAT' ? 'text-rose-400' :
+                  analysis.mlPrediction === 'BENIGN' ? 'text-emerald-400' : 'text-slate-400'
+                )}>
+                  {analysis.mlPrediction ?? '—'}
+                </span>
+              </div>
+              <div className="rounded border border-slate-800 bg-slate-950/60 p-2 text-center">
+                <span className="text-[9px] uppercase text-slate-600 block mb-0.5">Threat Prob</span>
+                <span className={cn(
+                  'text-[11px] font-black',
+                  (analysis.threatProbability ?? 0) >= 0.85 ? 'text-rose-400' :
+                  (analysis.threatProbability ?? 0) >= 0.5 ? 'text-orange-400' : 'text-emerald-400'
+                )}>
+                  {analysis.threatProbability !== undefined
+                    ? `${Math.round(analysis.threatProbability * 100)}%`
+                    : '—'}
+                </span>
+              </div>
+              <div className="rounded border border-slate-800 bg-slate-950/60 p-2 text-center">
+                <span className="text-[9px] uppercase text-slate-600 block mb-0.5">Risk Score</span>
+                <span className={cn(
+                  'text-[11px] font-black',
+                  analysis.riskScore >= 0.85 ? 'text-rose-400' :
+                  analysis.riskScore >= 0.5 ? 'text-orange-400' : 'text-emerald-400'
+                )}>
+                  {Math.round(analysis.riskScore * 100)}/100
+                </span>
+              </div>
+            </div>
+
+            {/* SHAP Explanation */}
             <div className="flex items-center justify-between">
               <span className="text-[10px] uppercase text-slate-300 font-semibold flex items-center gap-1">
                 <Cpu className="h-3 w-3 text-blue-400" />
-                TreeSHAP Attribution Preview
-              </span>
-              <span className="text-[10px] text-slate-500">
-                Confidence: {Math.round(analysis.confidence * 100)}%
+                SHAP Feature Attribution
               </span>
             </div>
-
             <p className="text-[11px] font-sans text-slate-300 bg-slate-950 p-2.5 rounded border border-slate-800 leading-relaxed">
               {analysis.explanation.summary}
             </p>
-
             <div>
               <FeatureImpactChart factors={analysis.explanation.topFactors} />
             </div>

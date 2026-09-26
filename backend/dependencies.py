@@ -73,7 +73,9 @@ def get_dashboard_service(request: Request) -> DashboardService:
     if svc is None:
         events_svc = get_events_service(request)
         alerts_svc = get_alerts_service(request)
-        svc = DashboardService(events_svc, alerts_svc)
+        # Include DatasetStatsService for real V3 CSV-derived totals
+        dataset_stats_svc = getattr(request.app.state, "dataset_stats_service", None)
+        svc = DashboardService(events_svc, alerts_svc, dataset_stats_svc)
         request.app.state.dashboard_service = svc
     return svc
 

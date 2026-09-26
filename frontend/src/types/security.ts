@@ -5,23 +5,55 @@ export type AlertStatus = 'active' | 'investigating' | 'resolved' | 'dismissed';
 export interface ExplanationFactor {
   feature: string;
   label?: string;
-  impact: number; // positive increases risk, negative decreases risk
+  impact: number; // signed SHAP value (+ increases threat, - decreases)
   observedValue?: string | number;
   baselineValue?: string | number;
   description?: string;
   category?: 'identity' | 'network' | 'action' | 'time' | 'resource';
 }
 
+export interface LimeRule {
+  rule: string;      // LIME local surrogate rule text
+  weight: number;    // signed surrogate weight (+ Pro-Threat, - Pro-Benign)
+  direction: string; // "Pro-Threat" | "Pro-Benign"
+}
+
+export interface FaithfulnessAudit {
+  isFaithful: boolean;          // Did LLM cite the correct SHAP driver?
+  modelTopShapFeature: string;  // Feature with highest |SHAP| value
+  llmCitedFeature: string;      // Feature the LLM identified as primary driver
+  exactMatch: boolean;
+  semanticMatch: boolean;
+  top3Overlap: boolean;
+  provider: string;             // "gemini" | "local_deterministic_fallback"
+}
+
 export interface SecurityAnalysis {
   eventId: string;
-  riskScore: number; // 0.0 - 1.0
-  classification: RiskClassification;
-  confidence: number; // 0.0 - 1.0
+  // ── ML PREDICTION (BENIGN / THREAT) ──────────────────────────────────────
+  mlPrediction?: string;        // "BENIGN" | "THREAT" | "ERROR"
+  // ── THREAT PROBABILITY ───────────────────────────────────────────────────
+  threatProbability?: number;   // ensemble avg of XGBoost + TabNet [0.0, 1.0]
+  xgboostProbability?: number;  // XGBoost V3 threat probability
+  tabnetProbability?: number;   // TabNet V3 threat probability
+  modelAgreement?: boolean;     // true if both models agree on BENIGN/THREAT
+  confidenceGap?: number;       // |xgb_prob - tabnet_prob|
+  // ── RISK SCORE ───────────────────────────────────────────────────────────
+  riskScore: number;            // [0.0, 1.0] — equals threatProbability in this pipeline
+  // ── SEVERITY / RISK LEVEL ────────────────────────────────────────────────
+  classification: RiskClassification; // normal | suspicious | high_risk | critical
+  // ── MODEL CONFIDENCE ─────────────────────────────────────────────────────
+  confidence: number;           // P(correct class), NOT same as threatProbability for BENIGN events
+  // ── XAI EXPLANATION ──────────────────────────────────────────────────────
   explanation: {
-    summary: string;
-    topFactors: ExplanationFactor[];
+    summary: string;            // LLM-generated narrative
+    topFactors: ExplanationFactor[];  // SHAP attribution factors
     baselineContext?: string;
   };
+  limeExplanation?: LimeRule[]; // LIME perturbation-based surrogate rules
+  remediationSuggestion?: string; // LLM-generated remediation action
+  // ── FAITHFULNESS AUDIT ───────────────────────────────────────────────────
+  faithfulnessAudit?: FaithfulnessAudit;
   modelMetadata?: {
     modelName: string;
     version: string;

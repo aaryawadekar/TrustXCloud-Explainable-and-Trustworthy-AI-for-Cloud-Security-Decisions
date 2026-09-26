@@ -46,6 +46,22 @@ class Explanation(BaseModel):
     baselineContext: Optional[str] = None
 
 
+class LimeRule(BaseModel):
+    rule: str
+    weight: float = Field(..., description="Signed surrogate weight (+ toward Threat, - toward Benign)")
+    direction: str = Field(..., description="Pro-Threat or Pro-Benign")
+
+
+class FaithfulnessAudit(BaseModel):
+    isFaithful: bool
+    modelTopShapFeature: str
+    llmCitedFeature: str
+    exactMatch: bool = False
+    semanticMatch: bool = False
+    top3Overlap: bool = False
+    provider: str = "local_deterministic_fallback"
+
+
 class ModelMetadata(BaseModel):
     modelName: str
     version: str
@@ -55,10 +71,27 @@ class ModelMetadata(BaseModel):
 
 class SecurityAnalysis(BaseModel):
     eventId: str
+    # ── ML PREDICTION (BENIGN / THREAT) ──
+    mlPrediction: Optional[str] = None              # "BENIGN" | "THREAT" | "ERROR"
+    # ── THREAT PROBABILITY (ensemble avg) ──
+    threatProbability: Optional[float] = None       # raw avg of XGB+TabNet [0.0, 1.0]
+    xgboostProbability: Optional[float] = None
+    tabnetProbability: Optional[float] = None
+    modelAgreement: Optional[bool] = None           # True if both models agree on label
+    confidenceGap: Optional[float] = None
+    # ── RISK SCORE (0.0-1.0) ──
     riskScore: float = Field(..., ge=0.0, le=1.0)
+    # ── SEVERITY / RISK LEVEL ──
     classification: RiskClassification
+    # ── MODEL CONFIDENCE (confidence in the decision, NOT same as threat prob) ──
     confidence: float = Field(..., ge=0.0, le=1.0)
+    # ── XAI EXPLANATION ──
     explanation: Explanation
+    limeExplanation: List[LimeRule] = Field(default_factory=list)
+    remediationSuggestion: Optional[str] = None
+    # ── LLM FAITHFULNESS AUDIT ──
+    faithfulnessAudit: Optional[FaithfulnessAudit] = None
+    # ── MODEL METADATA ──
     modelMetadata: Optional[ModelMetadata] = None
 
 
