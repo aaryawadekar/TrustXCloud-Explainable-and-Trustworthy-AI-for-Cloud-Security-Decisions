@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  [data-theme="aws-amber"] {
+    --canvas-bg: #07090e;
+    --panel-bg: #0f141d;
+    --panel-header: #151b26;
+    --panel-border: #1f2737;
+    
+    --accent-primary: #f59e0b;
+    --accent-secondary: #d97706;
+    --accent-hover: #b45309;
+    --accent-subtle: #261c0d;
+    --accent-text: #fbbf24;
+
+    --background: 222 35% 4%;
+    --foreground: 210 40% 98%;
+    --card: 218 32% 9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 218 32% 9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 218 28% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 218 28% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 218 28% 17%;
+    --input: 218 28% 17%;
+    --ring: 38 92% 50%;
+    --radius: 0px;
+  }
+
+  [data-theme="cyber-cyan"] {
+    --canvas-bg: #06080d;
+    --panel-bg: #0b111a;
+    --panel-header: #111a26;
+    --panel-border: #1a2838;
+    
+    --accent-primary: #00e5ff;
+    --accent-secondary: #0284c7;
+    --accent-hover: #0369a1;
+    --accent-subtle: #08212e;
+    --accent-text: #38bdf8;
+
+    --background: 220 37% 4%;
+    --foreground: 210 40% 98%;
+    --card: 214 40% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 214 40% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 186 100% 50%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 214 30% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 214 30% 13%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 186 100% 50%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 30% 16%;
+    --input: 214 30% 16%;
+    --ring: 186 100% 50%;
+    --radius: 0px;
+  }
+
+  [data-theme="monolith"] {
+    --canvas-bg: #09090b;
+    --panel-bg: #111115;
+    --panel-header: #18181f;
+    --panel-border: #272732;
+    
+    --accent-primary: #f43f5e;
+    --accent-secondary: #e11d48;
+    --accent-hover: #be123c;
+    --accent-subtle: #291016;
+    --accent-text: #fb7185;
+
+    --background: 240 10% 4%;
+    --foreground: 210 40% 98%;
+    --card: 240 11% 7%;
+    --card-foreground: 210 40% 98%;
+    --popover: 240 11% 7%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 350 89% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 12% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 240 12% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 350 89% 60%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 12% 18%;
+    --input: 240 12% 18%;
+    --ring: 350 89% 60%;
+    --radius: 0px;
+  }
+}
+
+body {
+  background-color: var(--canvas-bg);
+  color: #f8fafc;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+  transition: background-color 0.15s ease;
+}
+
+/* Crisp Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--canvas-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
