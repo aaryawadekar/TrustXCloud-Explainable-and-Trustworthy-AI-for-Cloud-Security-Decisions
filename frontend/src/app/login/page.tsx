@@ -64,24 +64,19 @@ function LoginForm() {
     setShowGoogleModal(false);
 
     try {
-      // Check if real Google credentials are configured in backend
-      const res = await fetch('http://127.0.0.1:8000/auth/google/config');
-      if (res.ok) {
-        const config = await res.json();
-        if (config.configured && !customEmail) {
-          // Real Google OAuth 2.0 flow
-          window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
-          return;
-        }
+      if (!customEmail) {
+        // Main "Continue with Google" button — always redirect to real Google OAuth account picker
+        window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+        return;
       }
 
-      // If credentials unconfigured or custom persona chosen, use Google demo provider
+      // A specific demo persona was chosen from the modal
       const demoRes = await fetch('http://127.0.0.1:8000/auth/google/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: customEmail || 'alex.mercer@trustxcloud.io',
-          fullName: customName || 'Alex Mercer (SecOps Lead)',
+          email: customEmail,
+          fullName: customName,
         }),
       });
 

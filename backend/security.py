@@ -175,7 +175,7 @@ def get_google_oauth_url(state: str) -> str:
         "scope": "openid email profile",
         "state": state,
         "access_type": "offline",
-        "prompt": "consent",
+        "prompt": "select_account",
     }
     encoded_params = urlencode(params)
     return f"{base_url}?{encoded_params}"
