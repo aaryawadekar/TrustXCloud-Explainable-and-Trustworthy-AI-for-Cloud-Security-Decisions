@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { QueryProvider } from '@/providers/query-provider';
 import { AuthProvider } from '@/providers/auth-provider';
+import { FirebaseAuthProvider } from '@/providers/firebase-auth-provider';
 import { AppShell } from '@/components/layout/app-shell';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -22,7 +23,9 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen bg-slate-950 text-slate-100 antialiased`}>
         <QueryProvider>
           <AuthProvider>
-            <AppShell>{children}</AppShell>
+            <FirebaseAuthProvider>
+              <AppShell>{children}</AppShell>
+            </FirebaseAuthProvider>
           </AuthProvider>
         </QueryProvider>
       </body>

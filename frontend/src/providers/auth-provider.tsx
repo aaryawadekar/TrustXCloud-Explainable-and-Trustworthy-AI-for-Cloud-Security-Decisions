@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { type User as FirebaseUser } from 'firebase/auth';
+import { useFirebaseAuth } from '@/providers/firebase-auth-provider';
+import { signOutFirebase } from '@/lib/firebase';
 import { UserResponse } from '@/types/security';
 
 interface AuthContextType {
@@ -10,6 +13,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (token: string, user?: UserResponse) => void;
+  setFirebaseSession: (firebaseUser: FirebaseUser) => void;
   logout: () => Promise<void>;
   refetchUser: () => Promise<void>;
 }
@@ -20,9 +24,32 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   isAuthenticated: false,
   login: () => {},
+  setFirebaseSession: () => {},
   logout: async () => {},
   refetchUser: async () => {},
 });
+
+function mapFirebaseUser(firebaseUser: FirebaseUser): UserResponse {
+  const safeName = firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'firebase_user';
+  const username = safeName
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]/g, '_')
+    .slice(0, 30)
+    || 'firebase_user';
+
+  return {
+    id: firebaseUser.uid,
+    username,
+    email: firebaseUser.email || `${firebaseUser.uid}@firebase.local`,
+    role: 'analyst',
+    authProvider: 'firebase',
+    fullName: firebaseUser.displayName || undefined,
+    avatarUrl: firebaseUser.photoURL || undefined,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserResponse | null>(null);
@@ -30,10 +57,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const { user: firebaseUser, isReady: firebaseReady } = useFirebaseAuth();
+
+  const setFirebaseSession = useCallback((firebaseUserValue: FirebaseUser) => {
+    const nextUser = mapFirebaseUser(firebaseUserValue);
+    setUser(nextUser);
+    setToken(`firebase:${firebaseUserValue.uid}`);
+    setIsLoading(false);
+    localStorage.setItem('access_token', `firebase:${firebaseUserValue.uid}`);
+  }, []);
 
   const fetchCurrentUser = useCallback(async (authToken: string) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/me', {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/auth/me', {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -62,8 +98,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedToken = localStorage.getItem('access_token');
     if (savedToken) {
-      setToken(savedToken);
-      fetchCurrentUser(savedToken);
+      if (savedToken.startsWith('firebase:')) {
+        setToken(savedToken);
+        setUser((current) => current ?? {
+          id: 'firebase-session',
+          username: 'firebase_user',
+          email: 'firebase@local',
+          role: 'analyst',
+          authProvider: 'firebase',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        setIsLoading(false);
+      } else {
+        setToken(savedToken);
+        fetchCurrentUser(savedToken);
+      }
+    } else if (firebaseReady && firebaseUser) {
+      setFirebaseSession(firebaseUser);
     } else {
       setIsLoading(false);
     }
@@ -82,7 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [fetchCurrentUser]);
+  }, [fetchCurrentUser, firebaseReady, firebaseUser, setFirebaseSession]);
 
   const login = useCallback(
     (newToken: string, newUser?: UserResponse) => {
@@ -101,13 +154,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     const currentToken = localStorage.getItem('access_token') || token;
     try {
-      if (currentToken) {
-        await fetch('http://127.0.0.1:8000/auth/logout', {
+      if (currentToken && !currentToken.startsWith('firebase:')) {
+        await fetch('http://127.0.0.1:8000/api/v1/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${currentToken}`,
           },
         });
+      }
+
+      if (currentToken?.startsWith('firebase:')) {
+        await signOutFirebase();
       }
     } catch {
       // Silent catch on network error
@@ -134,6 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated: !!token,
         login,
+        setFirebaseSession,
         logout,
         refetchUser,
       }}

@@ -16,11 +16,17 @@ from pydantic import BaseModel
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from backend.config import settings
+from backend.routers import auth as auth_router
+
 app = FastAPI(
     title="TrustXCloud V3 API Bridge",
     description="REST API bridging the Next.js SOC Panel UI to the V3 dual ML & multi-level XAI pipeline.",
     version="3.0.0",
 )
+
+app.include_router(auth_router.router, prefix=f"{settings.API_V1_STR}/auth")
+app.include_router(auth_router.router, prefix="/auth")
 
 # Enable CORS for Next.js frontend
 app.add_middleware(

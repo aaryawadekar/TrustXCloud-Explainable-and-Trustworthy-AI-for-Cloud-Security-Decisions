@@ -33,7 +33,7 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/register', {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,15 +63,15 @@ export default function RegisterPage() {
     setGoogleLoading(true);
     setError('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/google/config');
+      const res = await fetch('http://127.0.0.1:8000/api/v1/auth/google/config');
       if (res.ok) {
         const config = await res.json();
         if (config.configured) {
-          window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+          window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
           return;
         }
       }
-      const demoRes = await fetch('http://127.0.0.1:8000/auth/google/demo', {
+      const demoRes = await fetch('http://127.0.0.1:8000/api/v1/auth/google/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -80,10 +80,10 @@ export default function RegisterPage() {
         login(data.access_token, data.user);
         router.push('/dashboard');
       } else {
-        window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+        window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
       }
     } catch {
-      window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+      window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
     } finally {
       setGoogleLoading(false);
     }

@@ -19,6 +19,9 @@ from unittest.mock import patch
 import pytest
 import jwt
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
+
+from api import app as api_bridge_app
 
 from backend.config import settings
 from backend.models.user import User
@@ -479,6 +482,23 @@ def test_root_auth_endpoints_alias(client):
     res3 = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert res3.status_code == 200
     assert res3.json()["username"] == "karen_root"
+
+
+def test_api_bridge_includes_auth_routes():
+    """Legacy api.py bridge should expose auth endpoints for frontend compatibility."""
+    client = TestClient(api_bridge_app)
+
+    payload = {
+        "username": "legacy_api_user",
+        "email": "legacy@trustxcloud.internal",
+        "password": "L3gacy!Secure2026",
+    }
+
+    res = client.post("/auth/register", json=payload)
+    assert res.status_code == 201, res.text
+    data = res.json()
+    assert data["username"] == "legacy_api_user"
+    assert data["email"] == "legacy@trustxcloud.internal"
 
 
 def test_google_config_endpoint(client):

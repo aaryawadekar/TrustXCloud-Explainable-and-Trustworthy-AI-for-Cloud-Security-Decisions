@@ -21,6 +21,7 @@ unicorn[standard]>=0.30.0
 uvicorn[standard]>=0.30.0
 pydantic>=2.0.0
 python-multipart>=0.0.9
+pytest>=8.0.0
 
 # Authentication & Database
 sqlalchemy>=2.0.0

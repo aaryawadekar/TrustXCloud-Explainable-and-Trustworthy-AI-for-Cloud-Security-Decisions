@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ShieldAlert, Eye, EyeOff, Lock, Mail, AlertCircle, Loader2, Sparkles, UserCheck } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
+import { isFirebaseReady, signInWithGooglePopup } from '@/lib/firebase';
 
 function LoginForm() {
   const router = useRouter();
@@ -36,7 +37,7 @@ function LoginForm() {
     setError('');
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/login', {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: form.username, password: form.password }),
@@ -65,13 +66,30 @@ function LoginForm() {
 
     try {
       if (!customEmail) {
-        // Main "Continue with Google" button — always redirect to real Google OAuth account picker
-        window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+        if (isFirebaseReady) {
+          const firebaseUser = await signInWithGooglePopup();
+          const demoRes = await fetch('http://127.0.0.1:8000/api/v1/auth/google/demo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: firebaseUser.email || 'firebase-user@trustxcloud.local',
+              fullName: firebaseUser.displayName || firebaseUser.email || 'Firebase User',
+            }),
+          });
+
+          if (demoRes.ok) {
+            const data = await demoRes.json();
+            login(data.access_token, data.user);
+            router.push('/dashboard');
+            return;
+          }
+        }
+
+        window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
         return;
       }
 
-      // A specific demo persona was chosen from the modal
-      const demoRes = await fetch('http://127.0.0.1:8000/auth/google/demo', {
+      const demoRes = await fetch('http://127.0.0.1:8000/api/v1/auth/google/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -85,10 +103,10 @@ function LoginForm() {
         login(data.access_token, data.user);
         router.push('/dashboard');
       } else {
-        window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+        window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
       }
     } catch {
-      window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+      window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
     } finally {
       setGoogleLoading(false);
     }
@@ -377,7 +395,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => {
-                    window.location.href = 'http://127.0.0.1:8000/auth/google/login?redirect=true';
+                    window.location.href = 'http://127.0.0.1:8000/api/v1/auth/google/login?redirect=true';
                   }}
                   className="w-full p-2.5 border border-[var(--panel-border)] bg-[var(--canvas-bg)] hover:border-blue-500 hover:bg-[var(--panel-header)] text-left transition-colors flex items-center gap-3"
                 >
