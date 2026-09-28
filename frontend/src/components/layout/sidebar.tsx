@@ -11,6 +11,10 @@ import {
   Cpu,
   Terminal,
   LogOut,
+  GitCompare,
+  ShieldCheck,
+  Cloud,
+  GitMerge,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers/auth-provider';
@@ -45,6 +49,31 @@ const navItems: NavItem[] = [
     label: 'Model Performance & XAI',
     href: '/models',
     icon: Cpu,
+  },
+];
+
+const governanceItems: NavItem[] = [
+  {
+    label: 'Model Comparison',
+    href: '/model-comparison',
+    icon: GitCompare,
+  },
+  {
+    label: 'Trustworthiness',
+    href: '/trustworthiness',
+    icon: ShieldCheck,
+  },
+  {
+    label: 'AWS Data Health',
+    href: '/aws-health',
+    icon: Cloud,
+  },
+  {
+    label: 'AWS Pipeline',
+    href: '/pipeline',
+    icon: GitMerge,
+    badge: 'LIVE',
+    badgeColor: 'bg-blue-950 text-blue-400 border border-blue-900',
   },
 ];
 
@@ -135,6 +164,46 @@ export function Sidebar({
           </nav>
         </div>
 
+        {/* ML Governance Section */}
+        <div>
+          <div className="px-2 mb-1.5 text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500">
+            ML Governance
+          </div>
+          <nav className="space-y-0.5">
+            {governanceItems.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                pathname === item.href ||
+                pathname.startsWith(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onClose}
+                  className={cn(
+                    'group flex items-center justify-between rounded-none px-2.5 py-2 text-xs font-mono transition-colors',
+                    isActive
+                      ? 'bg-[var(--panel-header)] text-[var(--accent-text)] border-l-2 border-[var(--accent-primary)] font-semibold'
+                      : 'text-slate-400 hover:bg-[var(--panel-header)] hover:text-slate-200'
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Icon
+                      className={cn(
+                        'h-3.5 w-3.5 flex-shrink-0 transition-colors',
+                        isActive ? 'text-[var(--accent-primary)]' : 'text-slate-500 group-hover:text-slate-300'
+                      )}
+                    />
+                    <span className="truncate">{item.label}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Engine Telemetry section */}
         <div>
           <div className="px-2 mb-1.5 text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500">
             Engine Telemetry
@@ -145,7 +214,7 @@ export function Sidebar({
               <span>TrustXCloud V3</span>
             </div>
             <p className="text-[11px] leading-normal text-slate-400">
-              XGBoost + TabNet dual inference with SHAP & LIME XAI.
+              XGBoost + TabNet dual inference with SHAP &amp; LIME XAI.
             </p>
             <div className="pt-1.5 flex items-center justify-between border-t border-[var(--panel-border)] text-[10px] text-slate-400">
               <span>Faithfulness:</span>

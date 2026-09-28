@@ -383,4 +383,3 @@ class AuthService:
             expires_in=settings.JWT_EXPIRATION_MINUTES * 60,
             user=self.user_to_response(user),
         )
-

@@ -116,8 +116,28 @@ async def lifespan(app: FastAPI):
     analysis_service = AnalysisService(analyzer, events_service, dynamodb_repo)
     app.state.analysis_service = analysis_service
 
+    # 5. Initialize SQS Pipeline Worker (AWS mode) or LOCAL mode no-op
+    try:
+        from aws.sqs_worker import SQSWorker, live_events_store
+        sqs_worker = SQSWorker(
+            analyzer=analyzer,
+            dynamodb_repo=dynamodb_repo,
+            on_event_processed=live_events_store.add,
+        )
+        sqs_worker.start()
+        app.state.sqs_worker = sqs_worker
+        app.state.live_events_store = live_events_store
+        logger.info(f"SQS Pipeline Worker initialized | mode={sqs_worker.mode}")
+    except Exception as e:
+        logger.warning(f"SQS Worker could not be initialized: {e}. Pipeline will operate in LOCAL mode.")
+        app.state.sqs_worker = None
+        app.state.live_events_store = None
+
     logger.info("TrustXCloud Backend startup complete.")
     yield
+    # Shutdown
+    if getattr(app.state, "sqs_worker", None):
+        app.state.sqs_worker.stop()
     logger.info("Shutting down TrustXCloud Backend...")
 
 
@@ -423,6 +443,213 @@ def get_model_performance(
 ):
     """Returns verified model evaluation metrics and confusion matrices from models/final_metrics_v3.json."""
     return models_svc.get_performance()
+
+
+@app.get(
+    f"{settings.API_V1_STR}/models/comparison",
+    tags=["Models"],
+    summary="XGBoost V3 vs TabNet V3 Model Comparison",
+)
+def get_model_comparison(
+    models_svc: ModelsService = Depends(get_models_service),
+):
+    """
+    Returns side-by-side evaluation metrics for XGBoost V3 and TabNet V3 from
+    models/final_metrics_v3.json. Includes metrics across 3 evaluation splits.
+    Does NOT rank or declare a winner — both models are reported factually.
+
+    Concept separation:
+      - Metrics are evaluation-set averages, NOT per-event predictions.
+      - Per-event XGB/TabNet probabilities are in /api/v1/analysis/{event_id}.
+    """
+    return models_svc.get_model_comparison()
+
+
+@app.get(
+    f"{settings.API_V1_STR}/models/trustworthiness",
+    tags=["Models"],
+    summary="Model Trustworthiness Transparency Report",
+)
+def get_trustworthiness(
+    request: Request,
+    models_svc: ModelsService = Depends(get_models_service),
+):
+    """
+    Returns a multi-dimensional model trustworthiness report using actual pipeline artifacts:
+      - Model Performance (from final_metrics_v3.json)
+      - Model Agreement (structure description + per-event field reference)
+      - Explainability: SHAP, LIME, TabNet, LLM (from xai_metrics_v3.json)
+      - Data Quality (from dataset_stats_service / final_v3_dataset.csv)
+
+    Does NOT invent a composite trust score. Reports each dimension independently.
+    Values that cannot be determined from the real backend are reported as null/UNKNOWN.
+    """
+    stats_svc = getattr(request.app.state, "dataset_stats_service", None)
+    dataset_stats = stats_svc.get_summary() if stats_svc else None
+    return models_svc.get_trustworthiness(dataset_stats=dataset_stats)
+
+
+@app.get(
+    f"{settings.API_V1_STR}/models/aws-health",
+    tags=["Models"],
+    summary="AWS Data-Source Health Status",
+)
+def get_aws_health(
+    request: Request,
+    models_svc: ModelsService = Depends(get_models_service),
+):
+    """
+    Returns the actual connectivity and health status of AWS data sources.
+    Health is derived from real boto3 connection attempts, NOT from fabricated values.
+
+    Sources reported: CloudTrail, DynamoDB, IAM (derived), S3 (collector implemented).
+    Status values: HEALTHY | ERROR | UNKNOWN
+      - HEALTHY: boto3 available + credentials valid + service reachable
+      - ERROR: boto3 available but AWS credentials missing/invalid
+      - UNKNOWN: boto3 not installed or status cannot be determined
+    """
+    dynamodb_repo = getattr(request.app.state, "dynamodb_repo", None)
+    return models_svc.get_aws_health(dynamodb_repo=dynamodb_repo)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Real-Time AWS Pipeline Endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.get(
+    f"{settings.API_V1_STR}/pipeline/status",
+    tags=["Pipeline"],
+    summary="AWS Pipeline & SQS Worker Status",
+)
+def get_pipeline_status(request: Request):
+    """
+    Returns real-time AWS ingestion pipeline status.
+    Clearly indicates LOCAL/DEMO vs REAL AWS mode. Nothing fabricated.
+    """
+    sqs_worker = getattr(request.app.state, "sqs_worker", None)
+    live_store = getattr(request.app.state, "live_events_store", None)
+    try:
+        from aws.sqs_worker import get_sqs_queue_attributes, SQS_QUEUE_URL, BOTO3_AVAILABLE
+        sqs_attrs = get_sqs_queue_attributes()
+        mode = "AWS" if SQS_QUEUE_URL else "LOCAL"
+    except Exception as e:
+        sqs_attrs = {"status": "UNKNOWN", "reason": str(e)}
+        mode = "LOCAL"
+        BOTO3_AVAILABLE = False
+
+    worker_status = sqs_worker.get_status() if sqs_worker else {
+        "mode": mode, "isRunning": False, "sqsConfigured": False,
+        "boto3Available": BOTO3_AVAILABLE,
+        "analyzerAvailable": getattr(request.app.state, "analyzer", None) is not None,
+        "stats": {},
+    }
+    live_stats = live_store.get_stats() if live_store else {"totalLiveEvents": 0, "threatEvents": 0, "benignEvents": 0}
+
+    return {
+        "mode": mode,
+        "modeDescription": (
+            "REAL AWS — SQS worker polling for live CloudTrail events"
+            if mode == "AWS"
+            else "LOCAL / DEMO — Using V3 demo dataset. Set AWS_SQS_QUEUE_URL to enable real AWS pipeline."
+        ),
+        "worker": worker_status,
+        "sqsQueue": sqs_attrs,
+        "liveEventStore": live_stats,
+        "dataSourceNote": (
+            "Historical V3 dataset (14,004 events) always available. "
+            "Real AWS events appear in /pipeline/live-events once SQS is configured."
+        ),
+    }
+
+
+@app.get(
+    f"{settings.API_V1_STR}/pipeline/live-events",
+    tags=["Pipeline"],
+    summary="Real-Time Processed AWS Events Feed",
+)
+def get_live_events(
+    request: Request,
+    limit: int = Query(50, ge=1, le=200),
+):
+    """
+    Returns recently processed real AWS CloudTrail events from the SQS pipeline.
+    Empty list in LOCAL/DEMO mode — NOT fabricated.
+    """
+    live_store = getattr(request.app.state, "live_events_store", None)
+    if not live_store:
+        return {
+            "dataSource": "LOCAL", "events": [],
+            "message": "SQS worker not active. Configure AWS_SQS_QUEUE_URL to enable real event ingestion.",
+        }
+    events = live_store.get_recent(limit=limit)
+    return {"dataSource": "REAL_AWS" if events else "LOCAL", "count": len(events), "events": events}
+
+
+@app.get(
+    f"{settings.API_V1_STR}/pipeline/live-stats",
+    tags=["Pipeline"],
+    summary="Live Event Processing Statistics",
+)
+def get_live_stats(request: Request):
+    """Returns counts of real AWS events processed by the SQS worker."""
+    live_store = getattr(request.app.state, "live_events_store", None)
+    sqs_worker = getattr(request.app.state, "sqs_worker", None)
+    return {
+        "liveStore": live_store.get_stats() if live_store else {},
+        "workerStats": sqs_worker.stats if sqs_worker else {},
+    }
+
+
+@app.post(
+    f"{settings.API_V1_STR}/pipeline/ingest",
+    tags=["Pipeline"],
+    summary="Manually Ingest Raw CloudTrail Event (Testing)",
+)
+def manual_ingest(payload: Dict[str, Any], request: Request):
+    """
+    Accepts a raw CloudTrail event JSON and runs it through the full pipeline
+    synchronously. Use for local testing without AWS infrastructure.
+    Required: eventID, eventTime, eventName, eventSource, awsRegion,
+    sourceIPAddress, userIdentity.
+    """
+    analyzer = getattr(request.app.state, "analyzer", None)
+    if not analyzer:
+        raise HTTPException(status_code=503, detail="CloudSecurityAnalyzer ML engine not available.")
+    live_store = getattr(request.app.state, "live_events_store", None)
+    dynamodb_repo = getattr(request.app.state, "dynamodb_repo", None)
+
+    from aws.sqs_worker import normalize_cloudtrail_record, validate_cloudtrail_record, _build_processed_event
+
+    is_valid, errors = validate_cloudtrail_record(payload)
+    if not is_valid:
+        raise HTTPException(status_code=422, detail=f"CloudTrail validation failed: {errors}")
+
+    try:
+        normalized = normalize_cloudtrail_record(payload)
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=f"Normalization failed: {e}")
+
+    try:
+        import time as _time
+        t0 = _time.time()
+        ml_result = analyzer.analyze_event(normalized)
+        inference_ms = (_time.time() - t0) * 1000.0
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Inference failed: {e}")
+
+    if dynamodb_repo:
+        try:
+            dynamodb_repo.save_decision(ml_result)
+        except Exception as e:
+            logger.warning(f"Manual ingest persistence failed: {e}")
+
+    if live_store:
+        try:
+            live_store.add(_build_processed_event(payload, normalized, ml_result, inference_ms))
+        except Exception as e:
+            logger.warning(f"Live store update failed: {e}")
+
+    return {"status": "processed", "inferenceDurationMs": round(inference_ms, 2), "mlResult": ml_result}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
