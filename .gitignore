@@ -19,5 +19,3 @@ __pycache__/
 scratch/
 *.log
 *.db
-
-data/raw_experiments/
