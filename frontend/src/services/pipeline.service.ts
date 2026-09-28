@@ -90,21 +90,6 @@ export const pipelineService = {
    * Use for testing without AWS infrastructure.
    */
   manualIngest: async (cloudtrailEvent: Record<string, any>) => {
-    if (!APP_CONFIG.apiBaseUrl) throw new Error('Backend API URL not configured');
-    const res = await fetch(`${APP_CONFIG.apiBaseUrl}/api/v1/pipeline/ingest`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(typeof window !== 'undefined' && localStorage.getItem('access_token')
-          ? { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-          : {}),
-      },
-      body: JSON.stringify(cloudtrailEvent),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || `HTTP ${res.status}`);
-    }
-    return res.json();
+    return apiClient.post('/api/v1/pipeline/ingest', cloudtrailEvent);
   },
 };
