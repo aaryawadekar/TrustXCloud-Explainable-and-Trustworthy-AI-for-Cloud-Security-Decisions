@@ -145,6 +145,8 @@ export interface DashboardOverview {
     eventsDeltaPercent: number;
     alertsDeltaPercent: number;
     highRiskDeltaPercent: number;
+    threatCount?: number;
+    threatRate?: number;
   };
   activityTrend: {
     time: string;

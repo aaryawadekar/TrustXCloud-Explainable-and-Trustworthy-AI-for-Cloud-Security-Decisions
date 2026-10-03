@@ -6,12 +6,12 @@ import { cn } from '@/lib/utils';
 export function KpiCards({ kpis }: { kpis: DashboardOverview['kpis'] }) {
   const cards = [
     {
-      title: 'EVENTS (24H)',
+      title: 'TOTAL EVENTS',
       value: kpis.totalEvents.toLocaleString(),
       delta: `${kpis.eventsDeltaPercent > 0 ? '+' : ''}${kpis.eventsDeltaPercent}%`,
       isPositive: kpis.eventsDeltaPercent < 0,
       icon: Shield,
-      sub: 'Ingested AWS CloudTrail',
+      sub: 'V3 ML Dataset (CloudTrail)',
       topBorder: 'border-t-2 border-t-[var(--accent-primary)]',
       iconBg: 'bg-[var(--accent-subtle)] border-[var(--accent-primary)]',
       iconColor: 'text-[var(--accent-text)]',

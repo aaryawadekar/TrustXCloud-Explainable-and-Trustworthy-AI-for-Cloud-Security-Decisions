@@ -2,6 +2,11 @@
   "name": "explainable-cloud-security-dashboard",
   "version": "1.0.0",
   "private": true,
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "postcss.config.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
