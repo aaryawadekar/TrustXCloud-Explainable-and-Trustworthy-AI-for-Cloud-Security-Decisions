@@ -43,4 +43,6 @@ def get_db():
 
 def init_db():
     """Initializes database schema."""
+    import backend.models  # noqa: F401 - ensure all ORM models are registered
     Base.metadata.create_all(bind=engine)
+
