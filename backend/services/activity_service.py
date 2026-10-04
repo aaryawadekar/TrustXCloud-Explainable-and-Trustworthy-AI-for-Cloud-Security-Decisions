@@ -6,7 +6,7 @@ import logging
 from typing import Dict, Any, List
 from datetime import datetime, timezone
 
-from backend.schemas import IAMIdentityActivity, RecentAction, AssumedRole
+from backend.schemas import IAMIdentityActivity, RecentAction, AssumedRole, IAMIdentitySummary, RiskClassification
 from backend.services.events_service import EventsService
 
 logger = logging.getLogger(__name__)
@@ -15,6 +15,58 @@ logger = logging.getLogger(__name__)
 class ActivityService:
     def __init__(self, events_service: EventsService):
         self.events_service = events_service
+
+    def get_identities(self) -> List[IAMIdentitySummary]:
+        """Derives distinct IAM identities/principals from loaded event dataset."""
+        events = self.events_service.get_events(limit=1000)
+        user_map: Dict[str, List[Any]] = {}
+        for ev in events:
+            if not ev.user:
+                continue
+            user_map.setdefault(ev.user, []).append(ev)
+
+        risk_priority = {
+            RiskClassification.CRITICAL: 4,
+            RiskClassification.HIGH_RISK: 3,
+            RiskClassification.SUSPICIOUS: 2,
+            RiskClassification.NORMAL: 1,
+        }
+
+        identities: List[IAMIdentitySummary] = []
+        for user_name, u_events in user_map.items():
+            primary_ev = u_events[0]
+            arn = primary_ev.userArn or f"arn:aws:iam::123456789012:user/{user_name}"
+            roles = list({e.iamRole for e in u_events if e.iamRole})
+            alerts = sum(1 for e in u_events if (e.alertId is not None or e.riskScore >= 0.50))
+
+            max_risk = RiskClassification.NORMAL
+            max_priority = 0
+            for e in u_events:
+                p = risk_priority.get(e.classification, 1)
+                if p > max_priority:
+                    max_priority = p
+                    max_risk = e.classification
+
+            last_active = max(e.timestamp for e in u_events) if u_events else None
+
+            identities.append(
+                IAMIdentitySummary(
+                    id=user_name,
+                    name=user_name,
+                    arn=arn,
+                    risk=max_risk,
+                    alerts=alerts,
+                    eventCount=len(u_events),
+                    roles=roles,
+                    lastActive=last_active,
+                )
+            )
+
+        identities.sort(
+            key=lambda x: (x.alerts, risk_priority.get(x.risk, 1), x.eventCount),
+            reverse=True,
+        )
+        return identities
 
     def get_user_activity(self, user: str) -> IAMIdentityActivity:
         """Aggregates historical actions and baseline posture for a specified IAM identity."""

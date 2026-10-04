@@ -189,6 +189,17 @@ class IAMIdentityActivity(BaseModel):
     assumedRoles: List[AssumedRole] = Field(default_factory=list)
 
 
+class IAMIdentitySummary(BaseModel):
+    id: str
+    name: str
+    arn: Optional[str] = None
+    risk: RiskClassification
+    alerts: int = 0
+    eventCount: int = 0
+    roles: List[str] = Field(default_factory=list)
+    lastActive: Optional[str] = None
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Dashboard & KPI Schemas
 # ─────────────────────────────────────────────────────────────────────────────

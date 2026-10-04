@@ -28,8 +28,13 @@ class Settings:
         if origin.strip()
     ]
 
-    # AWS & Storage Settings
-    AWS_REGION: str = os.getenv("AWS_REGION", "us-east-1")
+    # AWS & Infrastructure Mode
+    # TRUSTXCLOUD_AWS_MODE=local  → full simulation, no AWS credentials required
+    # TRUSTXCLOUD_AWS_MODE=real   → real AWS services via boto3 credential provider chain
+    TRUSTXCLOUD_AWS_MODE: str = os.getenv("TRUSTXCLOUD_AWS_MODE", "local").strip().lower()
+    AWS_REGION: str = os.getenv("AWS_REGION", "eu-north-1")
+    AWS_SQS_QUEUE_URL: str = os.getenv("AWS_SQS_QUEUE_URL", "")
+    AWS_S3_CLOUDTRAIL_BUCKET: str = os.getenv("AWS_S3_CLOUDTRAIL_BUCKET", "")
     DYNAMODB_TABLE_NAME: str = os.getenv("DYNAMODB_TABLE_NAME", "CloudSecurityDecisions")
     
     # File Paths
@@ -57,8 +62,7 @@ class Settings:
     ALERT_RISK_THRESHOLD: float = float(os.getenv("ALERT_RISK_THRESHOLD", "0.50"))
 
     # Database Settings
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "").strip() or (
         "sqlite:///" + os.path.join(DATA_DIR, "trustxcloud.db").replace("\\", "/")
     )
 

@@ -8,6 +8,11 @@ venv/
 !.env.example
 .env.local
 
+# AWS Credential Info / CloudTrail Archives
+# This folder contains real CloudTrail logs with embedded session tokens.
+# DO NOT commit. Move this folder outside the project repository.
+aws credentials info/
+
 # Python
 __pycache__/
 *.py[cod]

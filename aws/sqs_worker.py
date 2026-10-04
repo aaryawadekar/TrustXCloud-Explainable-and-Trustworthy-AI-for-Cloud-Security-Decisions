@@ -59,7 +59,7 @@ except ImportError:
 # Configuration (read from environment — no hardcoded secrets)
 # ─────────────────────────────────────────────────────────────────────────────
 
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
+AWS_REGION = os.environ.get("AWS_REGION", "eu-north-1")
 SQS_QUEUE_URL = os.environ.get("AWS_SQS_QUEUE_URL", "")
 S3_BUCKET = os.environ.get("AWS_S3_CLOUDTRAIL_BUCKET", "")
 POLL_INTERVAL_SECONDS = int(os.environ.get("SQS_POLL_INTERVAL_SECONDS", "10"))
@@ -575,6 +575,26 @@ def _build_processed_event(
     event_summary = ml_result.get("event_summary", {})
     top_shap = ml_result.get("top_shap_features", [])
 
+    decision = ml_result.get("decision", "UNKNOWN")
+    confidence = float(ml_result.get("confidence", 0.0))
+
+    # Derive true threat probability P(THREAT) and riskScore
+    # Prevent confidence inversion for BENIGN events (BENIGN + conf 0.95 => threatProb = 0.05)
+    xgb_p = ml_result.get("xgboost_probability")
+    tab_p = ml_result.get("tabnet_probability")
+    if "threat_probability" in ml_result:
+        threat_prob = float(ml_result["threat_probability"])
+    elif xgb_p is not None and tab_p is not None:
+        threat_prob = (float(xgb_p) + float(tab_p)) / 2.0
+    elif decision == "THREAT":
+        threat_prob = confidence
+    else:
+        threat_prob = 1.0 - confidence
+
+    threat_prob = max(0.0, min(1.0, round(threat_prob, 4)))
+    risk_score = threat_prob
+    severity = _derive_severity(threat_prob)
+
     return {
         "eventId": raw_record.get("eventID", str(uuid.uuid4())),
         "eventName": raw_record.get("eventName", "Unknown"),
@@ -584,13 +604,14 @@ def _build_processed_event(
         "sourceIp": raw_record.get("sourceIPAddress", ""),
         "identityArn": meta.get("identity_arn", ""),
         "userName": meta.get("user_name", ""),
-        "mlPrediction": ml_result.get("decision", "UNKNOWN"),
-        "threatProbability": float(ml_result.get("confidence", 0.0)),
+        "mlPrediction": decision,
+        "confidence": confidence,
+        "threatProbability": threat_prob,
         "xgboostProbability": float(ml_result.get("xgboost_probability", 0.0)),
         "tabnetProbability": float(ml_result.get("tabnet_probability", 0.0)),
         "modelAgreement": bool(ml_result.get("model_agreement", False)),
-        "riskScore": float(ml_result.get("confidence", 0.0)),
-        "severity": _derive_severity(float(ml_result.get("confidence", 0.0))),
+        "riskScore": risk_score,
+        "severity": severity,
         "topShapFeature": top_shap[0]["feature"] if top_shap else None,
         "llmNarrative": ml_result.get("llm_narrative", ""),
         "inferenceDurationMs": inference_ms,

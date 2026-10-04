@@ -24,7 +24,7 @@ except ImportError:
 from src.predict_and_explain import CloudSecurityAnalyzer
 
 class S3CloudTrailParser:
-    def __init__(self, bucket_name: str = "example-cloudtrail-logs-bucket", region: str = "us-east-1"):
+    def __init__(self, bucket_name: str = "aws-cloudtrail-logs-781133583461-b3ad2bad", region: str = "eu-north-1"):
         self.bucket_name = bucket_name
         self.region = region
         self.analyzer = CloudSecurityAnalyzer()

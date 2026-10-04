@@ -31,7 +31,7 @@ MANIFEST_PATH = os.path.join(EXPERIMENTS_DIR, "experiment_manifest.json")
 os.makedirs(RAW_EXP_DIR, exist_ok=True)
 
 class CloudTrailCollector:
-    def __init__(self, region: str = "us-east-1"):
+    def __init__(self, region: str = "eu-north-1"):
         self.region = region
         self.is_live = False
         

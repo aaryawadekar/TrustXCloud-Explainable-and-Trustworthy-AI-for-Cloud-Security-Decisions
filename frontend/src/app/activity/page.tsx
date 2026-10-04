@@ -4,18 +4,10 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { KeyRound, Search, Activity, User, Shield } from 'lucide-react';
 import { activityService } from '@/services/activity.service';
-import { IAMIdentityActivity } from '@/types/security';
+import { IAMIdentityActivity, IAMIdentitySummary } from '@/types/security';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate, cn } from '@/lib/utils';
-
-const IDENTITIES = [
-  { id: 'dev-contractor-alex', name: 'dev-contractor-alex', risk: 'critical' as const, alerts: 2 },
-  { id: 'intern-jordan', name: 'intern-jordan', risk: 'high_risk' as const, alerts: 1 },
-  { id: 'prod-service-worker', name: 'prod-service-worker', risk: 'critical' as const, alerts: 1 },
-  { id: 'devops-lead-sarah', name: 'devops-lead-sarah', risk: 'suspicious' as const, alerts: 1 },
-  { id: 'console-user-emily', name: 'console-user-emily', risk: 'normal' as const, alerts: 0 },
-];
 
 const riskIconMap = {
   critical: <Shield className="h-3 w-3 text-red-400" />,
@@ -25,15 +17,30 @@ const riskIconMap = {
 };
 
 export default function ActivityPage() {
-  const [selectedUser, setSelectedUser] = useState('dev-contractor-alex');
+  const [selectedUser, setSelectedUser] = useState<string>('');
   const [search, setSearch] = useState('');
 
-  const { data: activity, isLoading } = useQuery({
-    queryKey: ['iam-activity-detail', selectedUser],
-    queryFn: () => activityService.getUserActivity(selectedUser),
+  const { data: identities = [], isLoading: isLoadingIdentities } = useQuery<IAMIdentitySummary[]>({
+    queryKey: ['iam-identities'],
+    queryFn: () => activityService.getIdentities(),
   });
 
-  const filteredIdentities = IDENTITIES.filter((i) =>
+  // Automatically default to the highest-priority identity once loaded
+  React.useEffect(() => {
+    if (identities.length > 0 && (!selectedUser || !identities.some((i) => i.id === selectedUser))) {
+      setSelectedUser(identities[0].id);
+    }
+  }, [identities, selectedUser]);
+
+  const { data: activity, isLoading: isLoadingActivity } = useQuery({
+    queryKey: ['iam-activity-detail', selectedUser],
+    queryFn: () => activityService.getUserActivity(selectedUser),
+    enabled: Boolean(selectedUser),
+  });
+
+  const isLoading = isLoadingIdentities || (Boolean(selectedUser) && isLoadingActivity);
+
+  const filteredIdentities = identities.filter((i) =>
     i.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -78,32 +85,42 @@ export default function ActivityPage() {
               </div>
             </CardHeader>
             <CardContent className="p-1.5 space-y-1 flex-1 overflow-y-auto">
-              {filteredIdentities.map((item) => {
-                const isSelected = item.id === selectedUser;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedUser(item.id)}
-                    className={cn(
-                      'w-full flex items-center justify-between rounded p-2 text-left transition-colors',
-                      isSelected
-                        ? 'bg-slate-800 border-l-2 border-blue-500 text-slate-100'
-                        : 'hover:bg-slate-850 text-slate-300'
-                    )}
-                  >
-                    <div className="min-w-0 pr-1 flex items-center gap-1.5">
-                      {riskIconMap[item.risk]}
-                      <span className="text-xs font-bold block truncate">{item.name}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <Badge riskLevel={item.risk} className="text-[10px]">
-                        {item.risk}
-                      </Badge>
-                      <span className="text-[10px] text-slate-500">{item.alerts}</span>
-                    </div>
-                  </button>
-                );
-              })}
+              {isLoadingIdentities ? (
+                <div className="p-4 text-center text-xs text-slate-500 animate-pulse">
+                  LOADING PRINCIPALS...
+                </div>
+              ) : filteredIdentities.length === 0 ? (
+                <div className="p-4 text-center text-xs text-slate-500">
+                  NO MATCHING PRINCIPALS FOUND
+                </div>
+              ) : (
+                filteredIdentities.map((item) => {
+                  const isSelected = item.id === selectedUser;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedUser(item.id)}
+                      className={cn(
+                        'w-full flex items-center justify-between rounded p-2 text-left transition-colors',
+                        isSelected
+                          ? 'bg-slate-800 border-l-2 border-blue-500 text-slate-100'
+                          : 'hover:bg-slate-850 text-slate-300'
+                      )}
+                    >
+                      <div className="min-w-0 pr-1 flex items-center gap-1.5">
+                        {riskIconMap[item.risk]}
+                        <span className="text-xs font-bold block truncate">{item.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <Badge riskLevel={item.risk} className="text-[10px]">
+                          {item.risk}
+                        </Badge>
+                        <span className="text-[10px] text-slate-500">{item.alerts}</span>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </CardContent>
           </Card>
         </div>

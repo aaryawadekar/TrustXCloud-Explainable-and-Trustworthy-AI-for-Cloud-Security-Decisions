@@ -32,6 +32,7 @@ from backend.schemas import (
     AlertStatusUpdate,
     DashboardOverview,
     IAMIdentityActivity,
+    IAMIdentitySummary,
     ModelPerformanceData,
 )
 from backend.repositories.dynamodb_repository import DynamoDBRepository
@@ -42,6 +43,8 @@ from backend.services.dashboard_service import DashboardService
 from backend.services.activity_service import ActivityService
 from backend.services.models_service import ModelsService
 from backend.services.dataset_stats_service import DatasetStatsService
+from backend.infrastructure import InfrastructureFactory
+from backend.infrastructure.pipeline_worker import PipelineWorker
 from backend.dependencies import (
     get_events_service,
     get_analysis_service,
@@ -75,18 +78,35 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Database schema initialization warning: {e}")
 
-    # 1. Initialize Persistence Layer
-    dynamodb_repo = DynamoDBRepository()
+    # 1. Initialize Infrastructure (LOCAL simulation or REAL AWS — set by TRUSTXCLOUD_AWS_MODE)
+    try:
+        infra_bundle = InfrastructureFactory.create()
+    except RuntimeError as e:
+        # REAL mode configured but something required is missing — fail hard
+        logger.critical(
+            f"Infrastructure initialization failed: {e}\n"
+            "Set TRUSTXCLOUD_AWS_MODE=local to run without AWS credentials."
+        )
+        raise
+    app.state.infra_bundle = infra_bundle
+
+    # 2. Backward-compat: DynamoDBRepository delegates to infra persistence adapter
+    #    AnalysisService still uses DynamoDBRepository (unchanged interface)
+    dynamodb_repo = DynamoDBRepository(persistence_adapter=infra_bundle.persistence)
     app.state.dynamodb_repo = dynamodb_repo
 
-    # 2a. Initialize Dataset Stats Service (reads final_v3_dataset.csv once)
+    # 3. Live events store (shared between PipelineWorker and FastAPI routes)
+    from aws.sqs_worker import LiveEventsStore
+    live_events_store = LiveEventsStore()
+    app.state.live_events_store = live_events_store
+
+    # 4. Dataset Stats Service
     dataset_stats_service = DatasetStatsService()
     app.state.dataset_stats_service = dataset_stats_service
 
-    # 2b. Initialize Events & Supporting Services
+    # 5. Application Services
     events_service = EventsService()
     alerts_service = AlertsService(events_service)
-    # Pass dataset_stats_service so DashboardService uses real V3 CSV totals
     dashboard_service = DashboardService(events_service, alerts_service, dataset_stats_service)
     activity_service = ActivityService(events_service)
     models_service = ModelsService()
@@ -97,7 +117,7 @@ async def lifespan(app: FastAPI):
     app.state.activity_service = activity_service
     app.state.models_service = models_service
 
-    # 3. Initialize ML/XAI Engine (Singleton CloudSecurityAnalyzer)
+    # 6. ML/XAI Engine (singleton CloudSecurityAnalyzer — real, not simulated)
     analyzer = None
     try:
         logger.info("Loading CloudSecurityAnalyzer ML/XAI engine...")
@@ -109,36 +129,34 @@ async def lifespan(app: FastAPI):
             f"CloudSecurityAnalyzer could not be loaded on startup: {e}. "
             "Backend will operate with fallback mocks or dependency injection."
         )
-
     app.state.analyzer = analyzer
 
-    # 4. Initialize Analysis Service
+    # 7. Analysis Service
     analysis_service = AnalysisService(analyzer, events_service, dynamodb_repo)
     app.state.analysis_service = analysis_service
 
-    # 5. Initialize SQS Pipeline Worker (AWS mode) or LOCAL mode no-op
-    try:
-        from aws.sqs_worker import SQSWorker, live_events_store
-        sqs_worker = SQSWorker(
-            analyzer=analyzer,
-            dynamodb_repo=dynamodb_repo,
-            on_event_processed=live_events_store.add,
-        )
-        sqs_worker.start()
-        app.state.sqs_worker = sqs_worker
-        app.state.live_events_store = live_events_store
-        logger.info(f"SQS Pipeline Worker initialized | mode={sqs_worker.mode}")
-    except Exception as e:
-        logger.warning(f"SQS Worker could not be initialized: {e}. Pipeline will operate in LOCAL mode.")
-        app.state.sqs_worker = None
-        app.state.live_events_store = None
+    # 8. Unified Pipeline Worker (mode-agnostic)
+    pipeline_worker = PipelineWorker(
+        mode=infra_bundle.mode,
+        transport=infra_bundle.transport,
+        persistence=infra_bundle.persistence,
+        analyzer=analyzer,
+        on_event_processed=live_events_store.add,
+    )
+    pipeline_worker.start()
+    app.state.pipeline_worker = pipeline_worker
+    # Keep sqs_worker alias for backward compat with any remaining references
+    app.state.sqs_worker = pipeline_worker
 
-    logger.info("TrustXCloud Backend startup complete.")
+    logger.info(
+        f"TrustXCloud Backend startup complete | "
+        f"mode={infra_bundle.mode.value} | {infra_bundle.describe()}"
+    )
     yield
+
     # Shutdown
-    if getattr(app.state, "sqs_worker", None):
-        app.state.sqs_worker.stop()
-    logger.info("Shutting down TrustXCloud Backend...")
+    pipeline_worker.stop()
+    logger.info("TrustXCloud Backend shutdown complete.")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -411,8 +429,24 @@ def get_dataset_stats(request: Request):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# User Identity Activity Endpoint
+# User Identity Activity Endpoints
 # ─────────────────────────────────────────────────────────────────────────────
+
+@app.get(
+    f"{settings.API_V1_STR}/identities",
+    response_model=List[IAMIdentitySummary],
+    tags=["Identity"],
+    summary="List IAM Identities and Posture",
+)
+def list_identities(
+    activity_svc: ActivityService = Depends(get_activity_service),
+):
+    """
+    Returns distinct IAM principals derived from the actual loaded event dataset,
+    along with their risk posture, alert counts, and observed roles.
+    """
+    return activity_svc.get_identities()
+
 
 @app.get(
     f"{settings.API_V1_STR}/activity/{{user}}",
@@ -523,41 +557,29 @@ def get_aws_health(
 )
 def get_pipeline_status(request: Request):
     """
-    Returns real-time AWS ingestion pipeline status.
-    Clearly indicates LOCAL/DEMO vs REAL AWS mode. Nothing fabricated.
+    Returns real-time pipeline status including infrastructure mode and health.
+    Clearly distinguishes LOCAL/SIMULATED from REAL AWS — nothing fabricated.
     """
-    sqs_worker = getattr(request.app.state, "sqs_worker", None)
+    pipeline_worker = getattr(request.app.state, "pipeline_worker", None)
     live_store = getattr(request.app.state, "live_events_store", None)
-    try:
-        from aws.sqs_worker import get_sqs_queue_attributes, SQS_QUEUE_URL, BOTO3_AVAILABLE
-        sqs_attrs = get_sqs_queue_attributes()
-        mode = "AWS" if SQS_QUEUE_URL else "LOCAL"
-    except Exception as e:
-        sqs_attrs = {"status": "UNKNOWN", "reason": str(e)}
-        mode = "LOCAL"
-        BOTO3_AVAILABLE = False
+    infra_bundle = getattr(request.app.state, "infra_bundle", None)
 
-    worker_status = sqs_worker.get_status() if sqs_worker else {
-        "mode": mode, "isRunning": False, "sqsConfigured": False,
-        "boto3Available": BOTO3_AVAILABLE,
-        "analyzerAvailable": getattr(request.app.state, "analyzer", None) is not None,
-        "stats": {},
+    worker_status = pipeline_worker.get_status() if pipeline_worker else {
+        "mode": "unknown", "isRunning": False, "analyzerLoaded": False, "stats": {}, "transport": {},
     }
     live_stats = live_store.get_stats() if live_store else {"totalLiveEvents": 0, "threatEvents": 0, "benignEvents": 0}
+    infra_health = infra_bundle.health.get_overall_health() if infra_bundle else {"mode": "unknown"}
 
     return {
-        "mode": mode,
-        "modeDescription": (
-            "REAL AWS — SQS worker polling for live CloudTrail events"
-            if mode == "AWS"
-            else "LOCAL / DEMO — Using V3 demo dataset. Set AWS_SQS_QUEUE_URL to enable real AWS pipeline."
-        ),
+        "mode": worker_status.get("mode", "unknown"),
+        "modeLabel": worker_status.get("modeLabel", "UNKNOWN"),
+        "description": infra_bundle.describe() if infra_bundle else "Infrastructure not initialized",
         "worker": worker_status,
-        "sqsQueue": sqs_attrs,
+        "infrastructure": infra_health,
         "liveEventStore": live_stats,
         "dataSourceNote": (
             "Historical V3 dataset (14,004 events) always available. "
-            "Real AWS events appear in /pipeline/live-events once SQS is configured."
+            "Simulated/real events appear in /pipeline/live-events based on mode."
         ),
     }
 
@@ -572,17 +594,17 @@ def get_live_events(
     limit: int = Query(50, ge=1, le=200),
 ):
     """
-    Returns recently processed real AWS CloudTrail events from the SQS pipeline.
-    Empty list in LOCAL/DEMO mode — NOT fabricated.
+    Returns recently processed CloudTrail events from the pipeline.
+    In LOCAL mode: events are from the local simulation (clearly labelled LOCAL_SIMULATED).
+    In REAL AWS mode: events are from real SQS/CloudTrail (labelled REAL_AWS).
     """
     live_store = getattr(request.app.state, "live_events_store", None)
+    infra_bundle = getattr(request.app.state, "infra_bundle", None)
+    mode_label = infra_bundle.mode.value if infra_bundle else "unknown"
     if not live_store:
-        return {
-            "dataSource": "LOCAL", "events": [],
-            "message": "SQS worker not active. Configure AWS_SQS_QUEUE_URL to enable real event ingestion.",
-        }
+        return {"dataSource": mode_label, "events": [], "count": 0}
     events = live_store.get_recent(limit=limit)
-    return {"dataSource": "REAL_AWS" if events else "LOCAL", "count": len(events), "events": events}
+    return {"dataSource": mode_label, "count": len(events), "events": events}
 
 
 @app.get(
@@ -591,12 +613,12 @@ def get_live_events(
     summary="Live Event Processing Statistics",
 )
 def get_live_stats(request: Request):
-    """Returns counts of real AWS events processed by the SQS worker."""
+    """Returns counts of events processed by the pipeline worker."""
     live_store = getattr(request.app.state, "live_events_store", None)
-    sqs_worker = getattr(request.app.state, "sqs_worker", None)
+    pipeline_worker = getattr(request.app.state, "pipeline_worker", None)
     return {
         "liveStore": live_store.get_stats() if live_store else {},
-        "workerStats": sqs_worker.stats if sqs_worker else {},
+        "workerStats": pipeline_worker._stats if pipeline_worker else {},
     }
 
 
@@ -607,49 +629,27 @@ def get_live_stats(request: Request):
 )
 def manual_ingest(payload: Dict[str, Any], request: Request):
     """
-    Accepts a raw CloudTrail event JSON and runs it through the full pipeline
-    synchronously. Use for local testing without AWS infrastructure.
-    Required: eventID, eventTime, eventName, eventSource, awsRegion,
+    Accepts a raw CloudTrail event JSON and runs it through the complete pipeline
+    synchronously. Works in both LOCAL and REAL AWS modes.
+    Required fields: eventID, eventTime, eventName, eventSource, awsRegion,
     sourceIPAddress, userIdentity.
     """
-    analyzer = getattr(request.app.state, "analyzer", None)
-    if not analyzer:
-        raise HTTPException(status_code=503, detail="CloudSecurityAnalyzer ML engine not available.")
-    live_store = getattr(request.app.state, "live_events_store", None)
-    dynamodb_repo = getattr(request.app.state, "dynamodb_repo", None)
-
-    from aws.sqs_worker import normalize_cloudtrail_record, validate_cloudtrail_record, _build_processed_event
-
-    is_valid, errors = validate_cloudtrail_record(payload)
-    if not is_valid:
-        raise HTTPException(status_code=422, detail=f"CloudTrail validation failed: {errors}")
-
-    try:
-        normalized = normalize_cloudtrail_record(payload)
-    except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Normalization failed: {e}")
+    pipeline_worker = getattr(request.app.state, "pipeline_worker", None)
+    if not pipeline_worker or not pipeline_worker._analyzer:
+        raise HTTPException(status_code=503, detail="Pipeline worker or ML engine not available.")
 
     try:
         import time as _time
         t0 = _time.time()
-        ml_result = analyzer.analyze_event(normalized)
+        ml_result = pipeline_worker.ingest_raw(payload)
         inference_ms = (_time.time() - t0) * 1000.0
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Inference failed: {e}")
-
-    if dynamodb_repo:
-        try:
-            dynamodb_repo.save_decision(ml_result)
-        except Exception as e:
-            logger.warning(f"Manual ingest persistence failed: {e}")
-
-    if live_store:
-        try:
-            live_store.add(_build_processed_event(payload, normalized, ml_result, inference_ms))
-        except Exception as e:
-            logger.warning(f"Live store update failed: {e}")
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     return {"status": "processed", "inferenceDurationMs": round(inference_ms, 2), "mlResult": ml_result}
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────

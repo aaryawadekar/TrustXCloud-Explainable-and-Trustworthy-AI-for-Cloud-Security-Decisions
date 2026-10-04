@@ -26,7 +26,7 @@ except ImportError:
 TABLE_NAME = "CloudSecurityDecisions"
 
 class DynamoDBSecurityStore:
-    def __init__(self, region: str = "us-east-1"):
+    def __init__(self, region: str = "eu-north-1"):
         self.region = region
         if boto3 is None:
             print(f"[*] Note: boto3 not installed.")

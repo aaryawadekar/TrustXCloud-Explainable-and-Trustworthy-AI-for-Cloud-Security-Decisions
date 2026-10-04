@@ -136,6 +136,17 @@ export interface IAMIdentityActivity {
   }[];
 }
 
+export interface IAMIdentitySummary {
+  id: string;
+  name: string;
+  arn?: string;
+  risk: RiskClassification;
+  alerts: number;
+  eventCount: number;
+  roles: string[];
+  lastActive?: string;
+}
+
 export interface DashboardOverview {
   kpis: {
     totalEvents: number;

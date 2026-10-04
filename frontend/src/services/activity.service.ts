@@ -1,9 +1,27 @@
 import { apiClient } from './api-client';
-import { IAMIdentityActivity } from '@/types/security';
+import { IAMIdentityActivity, IAMIdentitySummary } from '@/types/security';
 import { APP_CONFIG } from '@/lib/constants';
 import { MOCK_IAM_ACTIVITY } from '@/data/mock-security-data';
 
 export const activityService = {
+  getIdentities: async (): Promise<IAMIdentitySummary[]> => {
+    if (!APP_CONFIG.apiBaseUrl) {
+      return Promise.resolve(
+        Object.keys(MOCK_IAM_ACTIVITY).map((user) => ({
+          id: user,
+          name: user,
+          arn: `arn:aws:iam::123456789012:user/${user}`,
+          risk: 'normal' as const,
+          alerts: 0,
+          eventCount: 1,
+          roles: ['arn:aws:iam::123456789012:role/StandardUserRole'],
+          lastActive: new Date().toISOString(),
+        }))
+      );
+    }
+    return apiClient.get<IAMIdentitySummary[]>('/api/v1/identities');
+  },
+
   getUserActivity: async (user: string): Promise<IAMIdentityActivity> => {
     if (!APP_CONFIG.apiBaseUrl) {
       const found = MOCK_IAM_ACTIVITY[user];
