@@ -1,0 +1,134 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "TrustXCloud: Multi-Region CloudTrail with Continuous Amazon S3 Log Storage",
+  "Parameters": {
+    "TrailName": {
+      "Type": "String",
+      "Default": "trustxcloud-multi-region-trail",
+      "Description": "Name of the CloudTrail trail"
+    }
+  },
+  "Resources": {
+    "CloudTrailS3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Sub": "trustxcloud-security-logs-${AWS::AccountId}"
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        },
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "Id": "CloudTrailLogRetention",
+              "Status": "Enabled",
+              "Transitions": [
+                {
+                  "TransitionInDays": 90,
+                  "StorageClass": "STANDARD_IA"
+                },
+                {
+                  "TransitionInDays": 180,
+                  "StorageClass": "GLACIER"
+                }
+              ],
+              "ExpirationInDays": 365
+            }
+          ]
+        }
+      }
+    },
+    "CloudTrailS3BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "CloudTrailS3Bucket"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AWSCloudTrailAclCheck",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Action": "s3:GetBucketAcl",
+              "Resource": {
+                "Fn::GetAtt": ["CloudTrailS3Bucket", "Arn"]
+              },
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceArn": {
+                    "Fn::Sub": "arn:aws:cloudtrail:${AWS::Region}:${AWS::AccountId}:trail/${TrailName}"
+                  }
+                }
+              }
+            },
+            {
+              "Sid": "AWSCloudTrailWrite",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+              },
+              "Action": "s3:PutObject",
+              "Resource": {
+                "Fn::Sub": "${CloudTrailS3Bucket.Arn}/AWSLogs/${AWS::AccountId}/*"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-acl": "bucket-owner-full-control",
+                  "aws:SourceArn": {
+                    "Fn::Sub": "arn:aws:cloudtrail:${AWS::Region}:${AWS::AccountId}:trail/${TrailName}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "MultiRegionCloudTrail": {
+      "Type": "AWS::CloudTrail::Trail",
+      "DependsOn": "CloudTrailS3BucketPolicy",
+      "Properties": {
+        "TrailName": {
+          "Ref": "TrailName"
+        },
+        "S3BucketName": {
+          "Ref": "CloudTrailS3Bucket"
+        },
+        "IsMultiRegionTrail": true,
+        "IncludeGlobalServiceEvents": true,
+        "EnableLogFileValidation": true,
+        "IsLogging": true
+      }
+    }
+  },
+  "Outputs": {
+    "BucketName": {
+      "Description": "S3 bucket for CloudTrail logs",
+      "Value": { "Ref": "CloudTrailS3Bucket" }
+    },
+    "TrailArn": {
+      "Description": "Multi-region CloudTrail Trail ARN",
+      "Value": { "Fn::GetAtt": ["MultiRegionCloudTrail", "Arn"] }
+    }
+  }
+}

@@ -5,6 +5,8 @@ Acts as the bridge between raw JSON CloudTrail logs and structured SecurityEvent
 
 import os
 import json
+import gzip
+import glob
 import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timezone
@@ -37,16 +39,39 @@ class EventsService:
         self.load_events()
 
     def load_events(self):
-        """Loads and parses raw CloudTrail events from JSON storage."""
+        """Loads and parses raw CloudTrail events from JSON or compressed .json.gz storage."""
         if not os.path.exists(self.raw_events_path):
             logger.warning(f"Raw events file not found at: {self.raw_events_path}. Initializing empty.")
             return
 
         try:
-            with open(self.raw_events_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            
-            raw_records = data.get("Records", []) if isinstance(data, dict) else data
+            raw_records = []
+            if os.path.isdir(self.raw_events_path):
+                gz_files = glob.glob(os.path.join(self.raw_events_path, "*.json.gz"))
+                json_files = glob.glob(os.path.join(self.raw_events_path, "*.json"))
+                all_files = sorted(gz_files) + [f for f in sorted(json_files) if not f.endswith("manifest.json")]
+
+                for fpath in all_files:
+                    try:
+                        if fpath.endswith(".gz"):
+                            with gzip.open(fpath, "rt", encoding="utf-8") as gz:
+                                d = json.load(gz)
+                        else:
+                            with open(fpath, "r", encoding="utf-8") as f:
+                                d = json.load(f)
+                        recs = d.get("Records", []) if isinstance(d, dict) else d
+                        raw_records.extend(recs)
+                    except Exception as fe:
+                        logger.warning(f"Failed to read {fpath}: {fe}")
+            elif self.raw_events_path.endswith(".gz"):
+                with gzip.open(self.raw_events_path, "rt", encoding="utf-8") as gz:
+                    data = json.load(gz)
+                raw_records = data.get("Records", []) if isinstance(data, dict) else data
+            else:
+                with open(self.raw_events_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                raw_records = data.get("Records", []) if isinstance(data, dict) else data
+
             logger.info(f"Loaded {len(raw_records)} raw CloudTrail records from {self.raw_events_path}")
 
             self._raw_events = []
