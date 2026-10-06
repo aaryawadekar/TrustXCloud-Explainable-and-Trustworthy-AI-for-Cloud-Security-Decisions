@@ -51,15 +51,18 @@ export function RiskScoreDistribution({
                 fontFamily="monospace"
               />
               <Tooltip
+                cursor={{ fill: 'rgba(255, 255, 255, 0.04)' }}
                 contentStyle={{
-                  backgroundColor: '#090d16',
-                  borderColor: '#1e293b',
-                  borderRadius: '2px',
+                  backgroundColor: 'var(--panel-header, #151b26)',
+                  borderColor: 'var(--panel-border, #1f2737)',
+                  borderRadius: '0px',
                   fontSize: '11px',
                   fontFamily: 'monospace',
                   color: '#f8fafc',
                   boxShadow: 'none',
                 }}
+                itemStyle={{ color: '#f8fafc' }}
+                labelStyle={{ color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}
               />
               <Bar dataKey="normalCount" fill="#34d399" radius={0} name="Benign (Log)" isAnimationActive={false} />
               <Bar dataKey="attackCount" fill="#f43f5e" radius={0} name="Threats (Log)" isAnimationActive={false} />
