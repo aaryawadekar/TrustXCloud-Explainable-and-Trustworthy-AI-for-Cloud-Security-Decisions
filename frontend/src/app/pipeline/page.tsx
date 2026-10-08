@@ -260,7 +260,29 @@ export default function PipelinePage() {
     );
   }
 
-  const { mode, modeDescription, worker, sqsQueue, liveEventStore } = statusData;
+  const mode = statusData?.mode ?? 'LOCAL';
+  const modeDescription = statusData?.modeDescription ?? (statusData as any)?.description ?? 'Infrastructure pipeline';
+  const worker = statusData?.worker ?? {
+    mode: 'LOCAL',
+    isRunning: false,
+    sqsConfigured: false,
+    boto3Available: false,
+    analyzerAvailable: false,
+    stats: {},
+  };
+  const sqsQueue = statusData?.sqsQueue ?? {
+    status: 'NOT_CONFIGURED',
+    queueUrl: undefined,
+    approximateMessages: undefined,
+    messagesInFlight: undefined,
+    deadLetterQueueArn: null,
+    reason: undefined,
+  };
+  const liveEventStore = statusData?.liveEventStore ?? {
+    totalLiveEvents: 0,
+    threatEvents: 0,
+    benignEvents: 0,
+  };
   const liveEvents = eventsData?.events ?? [];
 
   return (

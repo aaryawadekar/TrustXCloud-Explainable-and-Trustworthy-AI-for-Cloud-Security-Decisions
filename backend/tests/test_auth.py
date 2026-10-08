@@ -486,19 +486,21 @@ def test_root_auth_endpoints_alias(client):
 
 def test_api_bridge_includes_auth_routes():
     """Legacy api.py bridge should expose auth endpoints for frontend compatibility."""
+    import uuid
     client = TestClient(api_bridge_app)
+    uid = uuid.uuid4().hex[:8]
 
     payload = {
-        "username": "legacy_api_user",
-        "email": "legacy@trustxcloud.internal",
+        "username": f"legacy_{uid}",
+        "email": f"legacy_{uid}@trustxcloud.internal",
         "password": "L3gacy!Secure2026",
     }
 
     res = client.post("/auth/register", json=payload)
     assert res.status_code == 201, res.text
     data = res.json()
-    assert data["username"] == "legacy_api_user"
-    assert data["email"] == "legacy@trustxcloud.internal"
+    assert data["username"] == payload["username"]
+    assert data["email"] == payload["email"]
 
 
 def test_google_config_endpoint(client):
