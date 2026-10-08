@@ -5,6 +5,55 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { DashboardOverview } from '@/types/security';
 
+interface TooltipPayloadItem {
+  name: string;
+  value: number;
+  payload: {
+    color: string;
+    level: string;
+    name: string;
+    value: number;
+  };
+}
+
+function RiskDistributionTooltip({
+  active,
+  payload,
+  total,
+}: {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+  total: number;
+}) {
+  if (!active || !payload || !payload.length) return null;
+  const item = payload[0];
+  const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : '0';
+
+  return (
+    <div className="bg-[var(--panel-header,#151b26)] border border-[var(--panel-border,#1f2737)] px-2.5 py-2 rounded-none font-mono text-xs shadow-2xl min-w-[150px] z-50">
+      <div className="flex items-center gap-1.5 font-bold text-slate-100 border-b border-[var(--panel-border,#1f2737)] pb-1.5 mb-1.5">
+        <span
+          className="h-2 w-2 rounded-none flex-shrink-0"
+          style={{ backgroundColor: item.payload.color }}
+        />
+        <span className="truncate">{item.name}</span>
+      </div>
+      <div className="flex items-center justify-between gap-3 text-[11px] text-slate-300">
+        <span className="text-slate-400">Events:</span>
+        <span className="font-semibold text-slate-100 tabular-nums">
+          {item.value.toLocaleString()}
+        </span>
+      </div>
+      <div className="flex items-center justify-between gap-3 text-[11px] text-slate-300 mt-0.5">
+        <span className="text-slate-400">Proportion:</span>
+        <span className="font-semibold text-[var(--accent-text,#fbbf24)] tabular-nums">
+          {pct}%
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function RiskDistributionChart({
   distribution,
 }: {
@@ -31,27 +80,21 @@ export function RiskDistributionChart({
                 paddingAngle={2}
                 dataKey="value"
                 isAnimationActive={false}
+                stroke="none"
               >
                 {distribution.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={entry.color}
-                    stroke="#0f172a"
-                    strokeWidth={1}
+                    stroke="var(--panel-bg, #0f141d)"
+                    strokeWidth={2}
+                    className="outline-none focus:outline-none"
                   />
                 ))}
               </Pie>
               <Tooltip
-                contentStyle={{
-                  backgroundColor: '#090d16',
-                  borderColor: '#1e293b',
-                  borderRadius: '2px',
-                  fontSize: '11px',
-                  fontFamily: 'monospace',
-                  color: '#f8fafc',
-                  boxShadow: 'none',
-                }}
-                formatter={(value: number) => [`${value.toLocaleString()} events`, 'Count']}
+                cursor={false}
+                content={<RiskDistributionTooltip total={total} />}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -68,7 +111,7 @@ export function RiskDistributionChart({
             return (
               <div
                 key={idx}
-                className="flex items-center justify-between gap-1 p-1 rounded bg-slate-950/60 border border-slate-800"
+                className="flex items-center justify-between gap-1 p-1 rounded-none bg-[var(--panel-header,#151b26)] border border-[var(--panel-border,#1f2737)]"
               >
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span

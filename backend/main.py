@@ -569,12 +569,33 @@ def get_pipeline_status(request: Request):
     }
     live_stats = live_store.get_stats() if live_store else {"totalLiveEvents": 0, "threatEvents": 0, "benignEvents": 0}
     infra_health = infra_bundle.health.get_overall_health() if infra_bundle else {"mode": "unknown"}
+    transport_details = infra_health.get("components", {}).get("transport", {}).get("details", {})
+
+    mode_raw = str(worker_status.get("mode", "LOCAL")).upper()
+    frontend_mode = "AWS" if mode_raw == "REAL" else "LOCAL"
+    sqs_configured = (mode_raw == "REAL") and bool(transport_details.get("queueUrl") or transport_details.get("sqsQueueUrl"))
 
     return {
-        "mode": worker_status.get("mode", "unknown"),
-        "modeLabel": worker_status.get("modeLabel", "UNKNOWN"),
+        "mode": frontend_mode,
+        "modeLabel": worker_status.get("modeLabel", "LOCAL / SIMULATED"),
+        "modeDescription": infra_bundle.describe() if infra_bundle else "Infrastructure not initialized",
         "description": infra_bundle.describe() if infra_bundle else "Infrastructure not initialized",
-        "worker": worker_status,
+        "worker": {
+            "mode": mode_raw,
+            "isRunning": worker_status.get("isRunning", False),
+            "sqsConfigured": sqs_configured,
+            "boto3Available": True,
+            "analyzerAvailable": worker_status.get("analyzerLoaded", False),
+            "stats": worker_status.get("stats", {}),
+        },
+        "sqsQueue": {
+            "status": "HEALTHY" if sqs_configured else "NOT_CONFIGURED" if mode_raw == "LOCAL" else "DEGRADED",
+            "queueUrl": transport_details.get("queueUrl") or transport_details.get("sqsQueueUrl"),
+            "approximateMessages": transport_details.get("approximateMessages", 0) or transport_details.get("queueSize", 0),
+            "messagesInFlight": transport_details.get("messagesInFlight", 0),
+            "deadLetterQueueArn": transport_details.get("deadLetterQueueArn"),
+            "reason": transport_details.get("reason"),
+        },
         "infrastructure": infra_health,
         "liveEventStore": live_stats,
         "dataSourceNote": (
