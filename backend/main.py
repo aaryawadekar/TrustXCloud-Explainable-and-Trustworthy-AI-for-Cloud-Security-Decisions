@@ -213,8 +213,21 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Health Check Endpoint
+# Root & Health Check Endpoints
 # ─────────────────────────────────────────────────────────────────────────────
+
+@app.get("/", tags=["System"])
+def root():
+    """Root landing endpoint with system links."""
+    return {
+        "service": "TrustXCloud Security Intelligence API",
+        "status": "online",
+        "version": "3.0.0",
+        "frontend_dashboard": "http://localhost:3000",
+        "interactive_api_docs": "http://localhost:8000/docs",
+        "health_check": "http://localhost:8000/health",
+        "events_endpoint": "http://localhost:8000/api/v1/events"
+    }
 
 @app.get(
     "/health",
