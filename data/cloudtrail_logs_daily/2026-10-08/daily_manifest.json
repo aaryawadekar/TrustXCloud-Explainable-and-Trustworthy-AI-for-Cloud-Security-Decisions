@@ -1,0 +1,25 @@
+{
+  "collection_date": "2026-10-08",
+  "aws_account_id": "663001881461",
+  "aws_region": "us-east-1",
+  "s3_bucket": "trustxcloud-security-logs-663001881461",
+  "s3_canonical_prefix": "s3://trustxcloud-security-logs-663001881461/AWSLogs/663001881461/CloudTrail/us-east-1/2026/10/08/",
+  "total_records": 74,
+  "total_gz_files": 11,
+  "generated_at": "2026-10-08T16:24:01.567097+00:00",
+  "gz_files": [
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_b8cdfefa.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_9b0485d3.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_05c1ba7e.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_a80c8e5e.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_42879197.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_aaec225e.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_260f13dd.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_9a19a0ae.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_3964e083.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_6504689e.json.gz",
+    "663001881461_CloudTrail_us-east-1_20261008T1623Z_f24e8c35.json.gz"
+  ],
+  "zip_archive": "cloudtrail_logs_2026-10-08.zip",
+  "tar_archive": "cloudtrail_logs_2026-10-08.tar.gz"
+}
