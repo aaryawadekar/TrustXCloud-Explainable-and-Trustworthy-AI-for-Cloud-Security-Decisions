@@ -26,6 +26,12 @@ import logging
 from typing import Dict, Any, Optional
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     import boto3
     from botocore.exceptions import ClientError, NoCredentialsError
     BOTO3_AVAILABLE = True

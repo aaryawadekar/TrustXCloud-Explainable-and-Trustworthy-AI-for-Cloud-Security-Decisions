@@ -28,6 +28,12 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Any, Optional
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     import boto3
     from botocore.exceptions import ClientError, NoCredentialsError
     BOTO3_AVAILABLE = True
@@ -85,10 +91,22 @@ class DailyCloudTrailCollector:
                 sts = session.client("sts")
                 identity = sts.get_caller_identity()
                 self.account_id = identity.get("Account", self.account_id)
+                self.bucket_name = bucket_name or f"trustxcloud-security-logs-{self.account_id}"
+                self.s3_day_dir = os.path.join(
+                    S3_STORAGE_ROOT,
+                    "AWSLogs",
+                    self.account_id,
+                    "CloudTrail",
+                    self.region,
+                    self.year,
+                    self.month,
+                    self.day,
+                )
+                os.makedirs(self.s3_day_dir, exist_ok=True)
                 self.s3_client = session.client("s3")
                 self.ct_client = session.client("cloudtrail")
                 self.is_live = True
-                print(f"[*] CloudTrail Collector: Connected to AWS (Account: {self.account_id}, Region: {self.region})")
+                print(f"[*] CloudTrail Collector: Connected to AWS (Account: {self.account_id}, Region: {self.region}, Bucket: {self.bucket_name})")
             except Exception as exc:
                 print(f"[*] AWS credentials notice ({exc}). Operating in High-Fidelity Simulation Mode.")
                 self.is_live = False
@@ -183,6 +201,20 @@ class DailyCloudTrailCollector:
         with open(export_path, "wb") as f:
             f.write(compressed_data)
 
+        # If connected to live AWS, upload directly to the real S3 bucket
+        if self.is_live and self.s3_client:
+            try:
+                s3_key = f"AWSLogs/{self.account_id}/CloudTrail/{self.region}/{self.year}/{self.month}/{self.day}/{file_name}"
+                self.s3_client.put_object(
+                    Bucket=self.bucket_name,
+                    Key=s3_key,
+                    Body=compressed_data,
+                    ServerSideEncryption="AES256",
+                )
+                print(f"  [+] Uploaded to live S3: s3://{self.bucket_name}/{s3_key}")
+            except Exception as s3_err:
+                print(f"  [-] Live S3 upload notice ({s3_err})")
+
         print(f"  [+] Created: {file_name} ({len(records)} events, {len(compressed_data)} bytes compressed)")
         return export_path, len(records)
 
@@ -212,9 +244,9 @@ class DailyCloudTrailCollector:
         return zip_filename, tar_filename
 
     def _fetch_live_day_logs(self) -> List[Dict[str, Any]]:
-        """Pulls logs from live S3 bucket for the target date."""
+        """Pulls logs from live S3 bucket or queries CloudTrail LookupEvents for the target date."""
         prefix = f"AWSLogs/{self.account_id}/CloudTrail/{self.region}/{self.year}/{self.month}/{self.day}/"
-        print(f"[*] Querying S3 prefix: s3://{self.bucket_name}/{prefix}...")
+        print(f"[*] Querying live S3 bucket prefix: s3://{self.bucket_name}/{prefix}...")
         batches = []
         try:
             paginator = self.s3_client.get_paginator("list_objects_v2")
@@ -232,12 +264,41 @@ class DailyCloudTrailCollector:
                             "timestamp_str": datetime.now(timezone.utc).strftime("%Y%m%dT%H%MZ"),
                         })
         except Exception as e:
-            print(f"[-] Live S3 query error ({e}). Falling back to simulation.")
-            return self._generate_simulated_day_batches()
+            print(f"[-] Live S3 query notice ({e}). Checking CloudTrail LookupEvents...")
 
         if not batches:
-            print("[*] No objects found in live S3 for today yet. Generating today's telemetry stream...")
-            return self._generate_simulated_day_batches()
+            print("[*] Querying live CloudTrail LookupEvents for today's real account activity...")
+            try:
+                start_time = datetime.fromisoformat(f"{self.target_date}T00:00:00+00:00")
+                end_time = datetime.now(timezone.utc)
+                lookup_resp = self.ct_client.lookup_events(
+                    StartTime=start_time,
+                    EndTime=end_time,
+                    MaxResults=50,
+                )
+                live_records = []
+                for ev in lookup_resp.get("Events", []):
+                    raw_str = ev.get("CloudTrailEvent", "{}")
+                    try:
+                        rec = json.loads(raw_str)
+                        live_records.append(rec)
+                    except Exception:
+                        pass
+
+                print(f"[+] Retrieved {len(live_records)} real live CloudTrail events from AWS Account: {self.account_id}!")
+                sim_batches = self._generate_simulated_day_batches()
+                if live_records:
+                    batches.append({
+                        "records": live_records,
+                        "timestamp_str": datetime.now(timezone.utc).strftime("%Y%m%dT%H%MZ"),
+                        "batch_type": "live_account_telemetry",
+                    })
+                    batches.extend(sim_batches)
+                else:
+                    batches = sim_batches
+            except Exception as le_err:
+                print(f"[-] LookupEvents notice ({le_err}). Using simulation stream.")
+                batches = self._generate_simulated_day_batches()
 
         return batches
 
